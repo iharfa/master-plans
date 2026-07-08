@@ -206,9 +206,13 @@ td.cell{text-align:center}
 /* ---------- network diagram ---------- */
 .net-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:var(--s5)}
 @media(max-width:900px){.net-wrap{grid-template-columns:1fr}}
+.net-toolbar{display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap;margin-bottom:var(--s4)}
+.btn.sm{padding:6px 11px;font-size:12.5px}
 .net-canvas{border:1px solid var(--line);border-radius:var(--r2);background:
   radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0/22px 22px, var(--panel);box-shadow:var(--shadow);overflow:hidden}
-.net-canvas svg{display:block;width:100%;height:auto}
+.net-canvas svg{display:block;width:100%;height:auto;touch-action:none}
+.dotk{width:12px;height:12px;border-radius:50%;display:inline-block;flex:none}
+.dotk.sm{width:9px;height:9px} .dotk.xs{width:6px;height:6px}
 .net-node{cursor:pointer}
 .net-node .box{transition:filter var(--d1),opacity var(--d1)}
 .net-node text{font-family:var(--font-display);pointer-events:none}

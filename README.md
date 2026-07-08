@@ -22,10 +22,12 @@ Garden Island and the Landscape Development Masterplan are being merged into one
 
 ## What it does
 
-- **Document network** — an SVG graph of how the documents link: solid lines down the
-  hierarchy (Framework → UDMP → sector plans), curved lines between sector plans that share
-  a topic (thicker = more shared topics, coloured by severity). Hover a node to isolate its
-  links and list them.
+- **Document network** — an expandable force-directed graph. The Framework's 8 policy
+  pillars form the backbone; every plan's **themes feed the pillars**, so two plans that
+  touch the same pillar are interlinked through it. Click a plan to fan out its **themes**,
+  click a theme to fan out its **actions**. Dashed edges mark cross-plan overlaps
+  (realignment). Hover a pillar to list every theme feeding it across all plans; hover a
+  theme to see the pillars it feeds and its actions.
 - **By document** — a per-document worklist: what's missing from each document, concrete
   additions with the exact section to edit, and the realignments it shares with its siblings.
 - **Coverage matrix** — which plan owns or contributes to each framework pillar.

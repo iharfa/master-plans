@@ -55,19 +55,25 @@
       <div class="pagehead">
         <div class="kicker">Document Network</div>
         <h1>How the documents link</h1>
-        <p class="sub">Solid lines run down the hierarchy — Framework to master plan to sector plans. Curved lines connect sector plans that address the same topic and therefore need coordinating; thicker means more shared topics. Hover or tap a document to isolate its links.</p>
+        <p class="sub">Every plan's <b>themes</b> feed the Framework's <b>policy pillars</b> — so two plans that touch the same pillar are interlinked through it. <b>Click a document</b> to fan out its themes; <b>click a theme</b> to fan out its actions. Dashed lines mark cross-plan overlaps that need realignment. Hover anything for detail; hover a pillar to see every theme feeding it.</p>
+      </div>
+      <div class="net-toolbar">
+        <button class="btn ghost sm" id="net-expand">⤢ Expand all plans</button>
+        <button class="btn ghost sm" id="net-collapse">⤡ Collapse all</button>
+        <span class="mini" id="net-hint">Tip: click a coloured plan node to reveal its themes.</span>
       </div>
       <div class="net-wrap">
         <div class="net-canvas" id="net-canvas"></div>
         <div class="net-side">
-          <h3 id="net-title">Select a document</h3>
-          <p class="np" id="net-desc">Hover a node to see everything it connects to — its parent, and every sibling plan it overlaps with.</p>
+          <h3 id="net-title">The framework backbone</h3>
+          <p class="np" id="net-desc">Pillars P1–P8 sit at the centre. Hover a pillar to see which themes — across every plan — feed it. Click a plan to expand its themes and actions.</p>
           <div id="net-links"></div>
           <div class="net-legend">
+            <div class="row"><span class="dotk" style="background:var(--accent)"></span> Framework &amp; pillars</div>
+            <div class="row"><span class="dotk" style="background:#6366f1"></span> Plan · <span class="dotk sm" style="background:#22c55e"></span> theme · <span class="dotk xs" style="background:#22c55e"></span> action</div>
+            <div class="row"><span class="ln" style="border-color:var(--accent)"></span> Theme feeds pillar (interlink)</div>
             <div class="row"><span class="ln" style="border-color:var(--ink-2)"></span> Hierarchy (governs / delivers)</div>
-            <div class="row"><span class="ln" style="border-color:var(--hi);border-top-style:dashed"></span> High-severity realignment</div>
-            <div class="row"><span class="ln" style="border-color:var(--med);border-top-style:dashed"></span> Medium realignment</div>
-            <div class="row"><span class="ln" style="border-color:var(--low);border-top-style:dashed"></span> Low realignment</div>
+            <div class="row"><span class="ln" style="border-color:var(--hi);border-top-style:dashed"></span> Cross-plan overlap (realignment)</div>
           </div>
         </div>
       </div>

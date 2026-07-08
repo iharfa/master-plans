@@ -1,7 +1,8 @@
 /* =============================================================================
-   UI layer (Hallmark · Workbench). Renders the crosswalk, network diagram,
-   gaps, overlaps, per-document worklist, framework explorer, integrity, and the
-   upload/version workflow. Analysis logic lives in data.js + engine.js.
+   UI layer (Hallmark · Workbench). Renders the crosswalk, the expandable
+   document-network graph, gaps, overlaps, per-document worklist, framework
+   explorer, integrity, and the upload/version workflow.
+   Analysis logic lives in data.js + engine.js.
    ========================================================================== */
 
 const $  = (s,r=document)=>r.querySelector(s);
@@ -10,6 +11,7 @@ const el = (t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=
 const planById = id => PLANS.find(p=>p.id===id);
 const sevOrder = {high:0,med:1,low:2};
 const SECTORS = ["SMP","HTMP","EMP","LDS"];
+const NS = "http://www.w3.org/2000/svg";
 
 /* engine state (upload/version workflow only) */
 let CURRENT_TEXTS = baselineDocs();
@@ -49,7 +51,6 @@ function initTheme(){
     const next=cur==='dark'?'light':'dark';
     document.documentElement.setAttribute('data-theme',next);
     localStorage.setItem('mp_theme',next);
-    renderNetwork(); // re-read CSS colours
   };
 }
 
@@ -207,102 +208,229 @@ function renderBydoc(){
   }).join('');
 }
 
-/* ---------- network diagram (hand-built SVG) ---------- */
-const NET_POS={
-  UDF :{x:410,y:60 ,w:210,h:54,label:"Urban Development Framework",short:"Framework",fill:"var(--accent)",ink:"var(--on-accent)"},
-  UDMP:{x:410,y:196,w:220,h:48,label:"Urban Development Master Plan",short:"UDMP",fill:"var(--panel)",ink:"var(--ink)",stroke:"var(--accent)"},
-  SMP :{x:110,y:392,w:140,h:56},HTMP:{x:305,y:392,w:140,h:56},
-  EMP :{x:500,y:392,w:140,h:56},LDS :{x:700,y:392,w:150,h:56}
-};
-function buildNetEdges(){
-  const edges=[];
-  edges.push({a:"UDF",b:"UDMP",type:"hier"});
-  SECTORS.forEach(s=>edges.push({a:"UDMP",b:s,type:"hier"}));
-  const pairs={};
-  OVERLAPS.forEach(o=>{
-    const ds=o.docs.filter(d=>SECTORS.includes(d));
-    for(let i=0;i<ds.length;i++)for(let j=i+1;j<ds.length;j++){
-      const key=[ds[i],ds[j]].sort().join('|');
-      if(!pairs[key])pairs[key]={a:key.split('|')[0],b:key.split('|')[1],type:"over",weight:0,sev:'low',topics:[]};
-      pairs[key].weight++; pairs[key].topics.push(o.title);
-      if(sevOrder[o.sev]<sevOrder[pairs[key].sev]) pairs[key].sev=o.sev;
-    }
-  });
-  Object.values(pairs).forEach(p=>edges.push(p));
-  return edges;
-}
-const NET_EDGES=buildNetEdges();
-function sevColour(s){return s==='high'?'var(--hi)':s==='med'?'var(--med)':'var(--low)';}
+/* =============================================================================
+   NETWORK — expandable force-directed graph
+   Nodes: framework · pillars · plans · themes · actions.
+   Themes feed pillars (the interlink); plans expand to themes; themes to actions.
+   ========================================================================== */
+const NETW=900, NETH=600, NPAD=46;
+const REST={backbone:150,hier:92,planfeed:180,own:70,feed:128,act:46,overlap:178};
+const REP=5200, SPRING=0.05, GRAV=0.006, DAMP=0.85, REPCAP=9;
+const R={framework:24,pillar:15,plan:16,theme:11,action:5.5};
+let GRAPH=null, gEls={}, focused=null;
 
-function renderNetwork(){
-  const W=820,H=540;
-  const P=NET_POS;
-  const nodeCenter=id=>({x:P[id].x,y:P[id].y});
-  let edgeSvg='',nodeSvg='';
-  NET_EDGES.forEach((e,i)=>{
-    const a=nodeCenter(e.a),b=nodeCenter(e.b);
-    if(e.type==='hier'){
-      const y1=a.y+P[e.a].h/2, y2=b.y-P[e.b].h/2;
-      edgeSvg+=`<path class="net-edge" data-a="${e.a}" data-b="${e.b}" d="M${a.x},${y1} C${a.x},${(y1+y2)/2} ${b.x},${(y1+y2)/2} ${b.x},${y2}" fill="none" stroke="var(--ink-2)" stroke-width="1.6" opacity=".55"/>`;
-    } else {
-      const dist=Math.abs(b.x-a.x), bow=46+dist*0.16;
-      const midx=(a.x+b.x)/2, cy=a.y+P[e.a].h/2+bow;
-      edgeSvg+=`<path class="net-edge over" data-a="${e.a}" data-b="${e.b}" data-topics="${e.topics.join(' ¦ ').replace(/"/g,'')}" d="M${a.x},${a.y+P[e.a].h/2-4} Q${midx},${cy} ${b.x},${b.y+P[e.b].h/2-4}" fill="none" stroke="${sevColour(e.sev)}" stroke-width="${1.6+e.weight*1.3}" stroke-dasharray="1 5" stroke-linecap="round" opacity=".85"/>`;
-    }
+function buildGraph(){
+  const nodes={}, links=[];
+  const add=(id,o)=>{nodes[id]={id,x:null,y:null,vx:0,vy:0,...o};};
+  add('F',{type:'framework',label:'UDF',full:'Urban Development Framework',fixed:true});
+  FRAMEWORK.forEach(p=>{add('P'+p.id,{type:'pillar',label:'P'+p.id,full:p.id+'. '+p.title});
+    links.push({s:'F',t:'P'+p.id,type:'backbone'});});
+  PLANS.forEach(pl=>{
+    const prim=new Set(); pl.themes.forEach(th=>(th.pillars.primary||[]).forEach(x=>prim.add(x)));
+    add(pl.id,{type:'plan',label:pl.short,full:pl.name,color:pl.colour,expandable:true,expanded:false});
+    pl.aggPillars=[...prim];
   });
-  Object.entries(P).forEach(([id,n])=>{
-    const pl=planById(id);
-    const stroke=n.stroke||(pl?pl.colour:'var(--line-2)');
-    const fill=n.fill||'var(--panel)';
-    const ink=n.ink||'var(--ink)';
-    const short=n.short||(pl?pl.short:id);
-    const x=n.x-n.w/2, y=n.y-n.h/2;
-    const sw=id==='UDF'?0:(id==='UDMP'?1.5:2.5);
-    const topbar = pl && pl.tier==='sector'
-      ? `<rect x="${x}" y="${y}" width="${n.w}" height="4" rx="2" fill="${pl.colour}"/>` : '';
-    nodeSvg+=`<g class="net-node" data-id="${id}" tabindex="0">
-      <rect class="box" x="${x}" y="${y}" width="${n.w}" height="${n.h}" rx="12" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" filter="url(#nsh)"/>
-      ${topbar}
-      <text x="${n.x}" y="${n.y+ (pl&&pl.tier==='sector'?2:5)}" text-anchor="middle" font-size="${id==='UDF'?16:14}" font-weight="600" fill="${ink}">${short}</text>
-      ${pl&&pl.tier==='sector'?`<text x="${n.x}" y="${n.y+18}" text-anchor="middle" font-size="9.5" fill="var(--muted)" font-family="var(--font-mono)">${id}</text>`:''}
-    </g>`;
+  links.push({s:'F',t:'UDMP',type:'hier'});
+  SECTORS.forEach(s=>links.push({s:'UDMP',t:s,type:'hier'}));
+  PLANS.forEach(pl=>{
+    pl.aggPillars.forEach(pid=>links.push({s:pl.id,t:'P'+pid,type:'planfeed'}));
+    pl.themes.forEach(th=>{
+      const tid=pl.id+':'+th.id;
+      add(tid,{type:'theme',label:th.id,full:th.title,plan:pl.id,color:pl.colour,
+        expandable:!!(th.actions&&th.actions.length),expanded:false});
+      links.push({s:pl.id,t:tid,type:'own'});
+      (th.pillars.primary||[]).forEach(pid=>links.push({s:tid,t:'P'+pid,type:'feed',strong:true}));
+      (th.pillars.secondary||[]).concat(th.pillars.touch||[]).forEach(pid=>links.push({s:tid,t:'P'+pid,type:'feed',strong:false}));
+      (th.actions||[]).forEach((a,i)=>{const aid=tid+':a'+i;
+        add(aid,{type:'action',label:'',full:a,plan:pl.id,color:pl.colour,theme:tid});
+        links.push({s:tid,t:aid,type:'act'});});
+    });
   });
-  $('#net-canvas').innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Document relationship network">
-    <defs><filter id="nsh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0a1a55" flood-opacity="0.10"/></filter></defs>
-    <g>${edgeSvg}</g><g>${nodeSvg}</g></svg>`;
-  wireNetwork();
+  // cross-plan overlap edges (plan↔plan) from OVERLAPS
+  const pairs={};
+  OVERLAPS.forEach(o=>{const ds=o.docs.filter(d=>SECTORS.includes(d));
+    for(let i=0;i<ds.length;i++)for(let j=i+1;j<ds.length;j++){
+      const k=[ds[i],ds[j]].sort().join('|');
+      if(!pairs[k])pairs[k]={s:k.split('|')[0],t:k.split('|')[1],type:'overlap',weight:0,sev:'low',topics:[]};
+      pairs[k].weight++;pairs[k].topics.push(o.title);
+      if(sevOrder[o.sev]<sevOrder[pairs[k].sev])pairs[k].sev=o.sev;}});
+  Object.values(pairs).forEach(p=>links.push(p));
+  return {nodes,links};
 }
-function wireNetwork(){
-  const nodes=$$('#net-canvas .net-node'), edges=$$('#net-canvas .net-edge');
-  const reset=()=>{nodes.forEach(n=>n.classList.remove('dim'));edges.forEach(e=>e.classList.remove('dim'));
-    $('#net-title').textContent='Select a document';
-    $('#net-desc').textContent='Hover a node to see everything it connects to — its parent, and every sibling plan it overlaps with.';
-    $('#net-links').innerHTML='';};
-  const focus=id=>{
-    const connected=new Set([id]);
-    NET_EDGES.forEach(e=>{if(e.a===id)connected.add(e.b);if(e.b===id)connected.add(e.a);});
-    nodes.forEach(n=>n.classList.toggle('dim',!connected.has(n.dataset.id)));
-    edges.forEach(ed=>{const on=ed.dataset.a===id||ed.dataset.b===id;ed.classList.toggle('dim',!on);});
-    const pl=planById(id);
-    $('#net-title').textContent=pl?pl.name:(id==='UDF'?'Urban Development Framework':'Urban Development Master Plan');
-    $('#net-desc').textContent=(DOC_ALIGN[id]&&DOC_ALIGN[id].role)||'';
-    let links='';
-    NET_EDGES.filter(e=>e.type==='hier'&&(e.a===id||e.b===id)).forEach(e=>{
-      const other=e.a===id?e.b:e.a; const down=e.a===id;
-      links+=`<div class="linkitem"><b>${down?'delivered through':'governed by'}</b> · ${planById(other)?.short||(other==='UDF'?'Framework':'UDMP')}</div>`;
-    });
-    NET_EDGES.filter(e=>e.type==='over'&&(e.a===id||e.b===id)).sort((x,y)=>sevOrder[x.sev]-sevOrder[y.sev]).forEach(e=>{
-      const other=e.a===id?e.b:e.a;
-      links+=`<div class="linkitem"><span class="pill sev-${e.sev} dot" style="margin-bottom:6px">${e.weight} shared topic${e.weight>1?'s':''} · ${planById(other)?.short}</span><br>${e.topics.join('<br>')}</div>`;
-    });
-    $('#net-links').innerHTML=links||'<div class="linkitem mini">No sibling overlaps.</div>';
-  };
-  nodes.forEach(n=>{
-    n.addEventListener('mouseenter',()=>focus(n.dataset.id));
-    n.addEventListener('focus',()=>focus(n.dataset.id));
-    n.addEventListener('click',()=>focus(n.dataset.id));
+const nodeVisible=n=>{
+  if(n.type==='framework'||n.type==='pillar'||n.type==='plan')return true;
+  if(n.type==='theme')return GRAPH.nodes[n.plan].expanded;
+  if(n.type==='action')return GRAPH.nodes[n.theme].expanded&&GRAPH.nodes[n.plan].expanded;
+  return false;
+};
+const linkVisible=l=>{
+  const a=GRAPH.nodes[l.s],b=GRAPH.nodes[l.t];
+  if(!nodeVisible(a)||!nodeVisible(b))return false;
+  if(l.type==='planfeed')return !GRAPH.nodes[l.s].expanded; // themes take over when expanded
+  return true;
+};
+const parentOf=n=> n.type==='theme'?GRAPH.nodes[n.plan] : n.type==='action'?GRAPH.nodes[n.theme] : null;
+
+function seed(nodes){
+  const cx=NETW/2, cy=NETH/2;
+  nodes.forEach((n,i)=>{
+    if(n.x!=null) return;
+    const p=parentOf(n); const ang=(i*2.399);
+    if(n.type==='framework'){n.x=cx;n.y=cy;}
+    else if(p&&p.x!=null){n.x=p.x+Math.cos(ang)*40;n.y=p.y+Math.sin(ang)*40;}
+    else {n.x=cx+Math.cos(ang)*190;n.y=cy+Math.sin(ang)*150;}
   });
-  $('#net-canvas').addEventListener('mouseleave',reset);
+}
+function simulate(nodes,links,iters,a0){
+  let alpha=a0;
+  for(let it=0;it<iters;it++){
+    for(let i=0;i<nodes.length;i++){const A=nodes[i];
+      for(let j=i+1;j<nodes.length;j++){const B=nodes[j];
+        let dx=A.x-B.x,dy=A.y-B.y,d2=dx*dx+dy*dy||0.01,d=Math.sqrt(d2);
+        let rep=REP/d2; if(rep>REPCAP)rep=REPCAP; const fx=dx/d*rep,fy=dy/d*rep;
+        A.vx+=fx;A.vy+=fy;B.vx-=fx;B.vy-=fy;}}
+    links.forEach(l=>{const A=GRAPH.nodes[l.s],B=GRAPH.nodes[l.t];
+      let dx=B.x-A.x,dy=B.y-A.y,d=Math.hypot(dx,dy)||0.01;
+      const f=(d-(REST[l.type]||90))*SPRING, fx=dx/d*f, fy=dy/d*f;
+      A.vx+=fx;A.vy+=fy;B.vx-=fx;B.vy-=fy;});
+    const cx=NETW/2,cy=NETH/2;
+    nodes.forEach(n=>{ if(n.fixed){n.x=cx;n.y=cy;n.vx=0;n.vy=0;return;}
+      n.vx+=(cx-n.x)*GRAV; n.vy+=(cy-n.y)*GRAV;
+      n.vx*=DAMP; n.vy*=DAMP; n.x+=n.vx*alpha; n.y+=n.vy*alpha;
+      n.x=Math.max(NPAD,Math.min(NETW-NPAD,n.x)); n.y=Math.max(NPAD,Math.min(NETH-NPAD,n.y)); });
+    alpha*=0.985;
+  }
+}
+function linkStyle(l){
+  if(l.type==='overlap')return{stroke:l.sev==='high'?'var(--hi)':l.sev==='med'?'var(--med)':'var(--low)',w:1.4+l.weight*1.1,dash:'1 5',op:.9};
+  if(l.type==='hier')return{stroke:'var(--ink-2)',w:1.5,dash:'',op:.5};
+  if(l.type==='backbone')return{stroke:'var(--accent)',w:1.2,dash:'',op:.28};
+  if(l.type==='planfeed')return{stroke:'var(--accent)',w:1.2,dash:'4 4',op:.35};
+  if(l.type==='feed')return{stroke:'var(--accent)',w:l.strong?1.8:1,dash:l.strong?'':'3 4',op:l.strong?.6:.35};
+  if(l.type==='own')return{stroke:'var(--line-2)',w:1.3,dash:'',op:.7};
+  if(l.type==='act')return{stroke:'var(--line-2)',w:1,dash:'',op:.5};
+  return{stroke:'var(--line-2)',w:1,dash:'',op:.5};
+}
+function drawGraph(){
+  const vis=Object.values(GRAPH.nodes).filter(nodeVisible);
+  const vl=GRAPH.links.filter(linkVisible);
+  seed(vis);
+  simulate(vis,vl,360,1.0);
+  const svg=document.createElementNS(NS,'svg');
+  svg.setAttribute('viewBox',`0 0 ${NETW} ${NETH}`);
+  svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+  svg.setAttribute('role','img'); svg.setAttribute('aria-label','Document relationship network');
+  const gl=document.createElementNS(NS,'g'), gn=document.createElementNS(NS,'g');
+  gEls={links:[],nodes:{},nodeList:vl};
+  vl.forEach(l=>{const st=linkStyle(l);
+    const ln=document.createElementNS(NS,'line');
+    ln.setAttribute('stroke',st.stroke);ln.setAttribute('stroke-width',st.w);
+    if(st.dash)ln.setAttribute('stroke-dasharray',st.dash);
+    ln.setAttribute('stroke-linecap','round');ln.setAttribute('opacity',st.op);
+    gl.append(ln); gEls.links.push({l,ln});});
+  vis.forEach(n=>{
+    const g=document.createElementNS(NS,'g');
+    g.setAttribute('tabindex','0'); g.dataset.id=n.id;
+    g.style.cursor=n.expandable?'pointer':'default';
+    const r=R[n.type];
+    // expandable halo
+    if(n.expandable){const h=document.createElementNS(NS,'circle');
+      h.setAttribute('r',r+4);h.setAttribute('fill','none');
+      h.setAttribute('stroke',n.color||'var(--accent)');h.setAttribute('stroke-width',1);
+      h.setAttribute('stroke-dasharray',n.expanded?'':'2 3');h.setAttribute('opacity',n.expanded?.9:.5);g.append(h);}
+    const c=document.createElementNS(NS,'circle'); c.setAttribute('r',r);
+    if(n.type==='framework'){c.setAttribute('fill','var(--accent)');}
+    else if(n.type==='pillar'){c.setAttribute('fill','var(--panel)');c.setAttribute('stroke','var(--accent)');c.setAttribute('stroke-width',1.6);}
+    else if(n.type==='plan'){c.setAttribute('fill',n.color);}
+    else if(n.type==='theme'){c.setAttribute('fill',n.color);c.setAttribute('fill-opacity',.28);c.setAttribute('stroke',n.color);c.setAttribute('stroke-width',1.6);}
+    else {c.setAttribute('fill',n.color);c.setAttribute('fill-opacity',.55);}
+    g.append(c);
+    // inside label for framework + pillar; below for plan/theme
+    if(n.type==='framework'){const t=document.createElementNS(NS,'text');t.setAttribute('text-anchor','middle');t.setAttribute('dy','4');t.setAttribute('font-size',12);t.setAttribute('font-weight','700');t.setAttribute('fill','var(--on-accent)');t.textContent='UDF';g.append(t);}
+    if(n.type==='pillar'){const t=document.createElementNS(NS,'text');t.setAttribute('text-anchor','middle');t.setAttribute('dy','3.5');t.setAttribute('font-size',10);t.setAttribute('font-weight','700');t.setAttribute('fill','var(--accent-ink)');t.setAttribute('font-family','var(--font-mono)');t.textContent=n.label;g.append(t);}
+    if(n.type==='plan'||n.type==='theme'){const t=document.createElementNS(NS,'text');t.setAttribute('text-anchor','middle');t.setAttribute('dy',r+11);t.setAttribute('font-size',n.type==='plan'?11:9.5);t.setAttribute('font-weight',n.type==='plan'?'600':'500');t.setAttribute('fill','var(--ink-2)');t.setAttribute('font-family',n.type==='theme'?'var(--font-mono)':'var(--font-display)');t.textContent=n.label;g.append(t);}
+    g.addEventListener('mouseenter',()=>focus(n.id));
+    g.addEventListener('focus',()=>focus(n.id));
+    g.addEventListener('click',()=>{ if(n.expandable){n.expanded=!n.expanded; drawGraph(); focus(n.id);} else focus(n.id); });
+    gn.append(g); gEls.nodes[n.id]=g;
+  });
+  svg.append(gl,gn);
+  const cvs=$('#net-canvas'); cvs.replaceChildren(svg);
+  cvs.onmouseleave=reset;
+  paint();
+  if(focused&&GRAPH.nodes[focused]&&nodeVisible(GRAPH.nodes[focused])) applyFocus(focused); else reset();
+}
+function paint(){
+  gEls.links.forEach(({l,ln})=>{const a=GRAPH.nodes[l.s],b=GRAPH.nodes[l.t];
+    ln.setAttribute('x1',a.x.toFixed(1));ln.setAttribute('y1',a.y.toFixed(1));
+    ln.setAttribute('x2',b.x.toFixed(1));ln.setAttribute('y2',b.y.toFixed(1));});
+  Object.entries(gEls.nodes).forEach(([id,g])=>{const n=GRAPH.nodes[id];
+    g.setAttribute('transform',`translate(${n.x.toFixed(1)},${n.y.toFixed(1)})`);});
+}
+const neighbours=id=>{const set=new Set([id]);
+  gEls.nodeList.forEach(l=>{if(l.s===id)set.add(l.t);if(l.t===id)set.add(l.s);});return set;};
+function applyFocus(id){
+  const near=neighbours(id);
+  Object.entries(gEls.nodes).forEach(([nid,g])=>g.style.opacity=near.has(nid)?'1':'.2');
+  gEls.links.forEach(({l,ln})=>ln.style.opacity=(l.s===id||l.t===id)?'':'0.06');
+}
+function focus(id){
+  focused=id; applyFocus(id);
+  const n=GRAPH.nodes[id]; if(!n)return;
+  const title=$('#net-title'),desc=$('#net-desc'),box=$('#net-links');
+  let links='';
+  if(n.type==='pillar'){
+    const pid=id.slice(1);
+    title.textContent=n.full;
+    desc.textContent='Every theme that feeds this pillar — the interlink between plans. '+(SPD_INDEX.pillarById[pid]?.scope||'');
+    const feeders={};
+    GRAPH.links.filter(l=>l.type==='feed'&&l.t===id).forEach(l=>{const th=GRAPH.nodes[l.s];(feeders[th.plan]??=[]).push({th,strong:l.strong});});
+    Object.entries(feeders).forEach(([plan,ths])=>{
+      links+=`<div class="linkitem"><b style="color:${planById(plan)?.colour}">${planById(plan)?.short||plan}</b><br>${ths.map(x=>`${x.strong?'● ':'◐ '}${x.th.full}`).join('<br>')}</div>`;});
+    if(!links)links='<div class="linkitem mini">No theme feeds this pillar — a coverage gap.</div>';
+  } else if(n.type==='plan'){
+    title.textContent=n.full;
+    desc.textContent=(DOC_ALIGN[id]&&DOC_ALIGN[id].role)||'';
+    const ths=planById(id).themes;
+    links+=`<div class="linkitem"><b>${n.expanded?'Themes (click node to collapse)':'Click the node to expand its themes'}</b><br>${ths.map(t=>`${t.id} · ${t.title}`).join('<br>')}</div>`;
+    GRAPH.links.filter(l=>l.type==='overlap'&&(l.s===id||l.t===id)).sort((a,b)=>sevOrder[a.sev]-sevOrder[b.sev]).forEach(l=>{
+      const other=l.s===id?l.t:l.s;
+      links+=`<div class="linkitem"><span class="pill sev-${l.sev} dot" style="margin-bottom:6px">${l.weight} shared · ${planById(other)?.short}</span><br>${l.topics.join('<br>')}</div>`;});
+  } else if(n.type==='theme'){
+    title.textContent=n.full;
+    const pl=planById(n.plan);
+    const feeds=GRAPH.links.filter(l=>l.type==='feed'&&l.s===id).map(l=>`${l.strong?'●':'◐'} P${l.t.slice(1)} ${SPD_INDEX.pillarById[l.t.slice(1)]?.title}`);
+    desc.textContent=`Theme of ${pl.name}. ${n.expandable?'Click to '+(n.expanded?'collapse':'expand')+' its actions.':''}`;
+    links+=`<div class="linkitem"><b>Feeds framework pillars</b><br>${feeds.join('<br>')||'—'}</div>`;
+    const th=pl.themes.find(t=>t.id===n.label);
+    if(th&&th.actions)links+=`<div class="linkitem"><b>Actions (${th.actions.length})</b><br>${th.actions.join('<br>')}</div>`;
+  } else if(n.type==='action'){
+    const pl=planById(n.plan), th=GRAPH.nodes[n.theme];
+    title.textContent='Action';
+    desc.textContent=`${pl.short} · ${th.full}`;
+    links=`<div class="linkitem">${n.full}</div>`;
+  } else {
+    title.textContent=n.full;
+    desc.textContent='The overarching policy layer. Its 8 pillars are the backbone every plan connects through.';
+    links=`<div class="linkitem"><b>8 policy pillars</b><br>${FRAMEWORK.map(p=>`P${p.id} · ${p.title}`).join('<br>')}</div>`;
+  }
+  box.innerHTML=links;
+}
+function reset(){
+  focused=null;
+  if(gEls.nodes)Object.values(gEls.nodes).forEach(g=>g.style.opacity='1');
+  if(gEls.links)gEls.links.forEach(({ln})=>ln.style.opacity='');
+  $('#net-title').textContent='The framework backbone';
+  $('#net-desc').textContent='Pillars P1–P8 sit at the centre. Hover a pillar to see which themes — across every plan — feed it. Click a plan to expand its themes and actions.';
+  $('#net-links').innerHTML='';
+}
+function renderNetwork(){
+  if(!GRAPH) GRAPH=buildGraph();
+  drawGraph();
+}
+function initNetControls(){
+  $('#net-expand').onclick=()=>{PLANS.forEach(p=>{if(GRAPH.nodes[p.id])GRAPH.nodes[p.id].expanded=true;});drawGraph();};
+  $('#net-collapse').onclick=()=>{Object.values(GRAPH.nodes).forEach(n=>{if(n.expandable)n.expanded=false;});focused=null;drawGraph();};
 }
 
 /* ---------- upload / versions ---------- */
@@ -366,7 +494,7 @@ function boot(){
   initTheme();initNav();
   renderKpis();renderHiermap();renderBars();renderMatrix();
   renderGaps();renderOverlaps();renderIntegrity();renderExplorer();
-  renderBydoc();renderNetwork();renderFileList();renderVersions();
+  renderBydoc();renderNetwork();initNetControls();renderFileList();renderVersions();
 
   const drop=$('#drop'),input=$('#fileinput');
   drop.onclick=()=>input.click();
