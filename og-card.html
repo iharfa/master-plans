@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!-- Source for og.png — render with:
+     chrome --headless=new --screenshot=og.png --window-size=1200,630 --virtual-time-budget=5000 og-card.html -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  body{
+    font-family:'Inter',sans-serif;
+    background:
+      radial-gradient(900px 500px at 82% 18%, rgba(75,107,255,.28), transparent 60%),
+      radial-gradient(700px 500px at 8% 108%, rgba(45,212,191,.12), transparent 55%),
+      linear-gradient(150deg,#12151f 0%,#0c0f16 100%);
+    color:#e7ebf0; position:relative;
+    padding:70px 76px; display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .top{display:flex;align-items:center;gap:14px}
+  .mark{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#5b78ff,#3a54e0);position:relative;flex:none;box-shadow:0 8px 24px rgba(75,107,255,.4)}
+  .mark::before{content:"";position:absolute;inset:11px;border:2.2px solid #fff;border-radius:4px;opacity:.95}
+  .mark::after{content:"";position:absolute;left:11px;top:22px;width:24px;height:2.2px;background:#fff;opacity:.95}
+  .brand{font-family:'Space Grotesk';font-weight:600;font-size:20px;letter-spacing:.01em}
+  .brand span{color:#93a0b2;font-family:'JetBrains Mono';font-size:14px;font-weight:500;margin-left:6px}
+  .mid{margin:0}
+  .eyebrow{font-family:'JetBrains Mono';font-size:16px;letter-spacing:.22em;text-transform:uppercase;color:#7f9bff;margin-bottom:20px}
+  h1{font-family:'Space Grotesk';font-weight:700;font-size:76px;line-height:1.02;letter-spacing:-.02em;max-width:16ch}
+  h1 b{color:#8aa2ff}
+  p.sub{font-size:24px;line-height:1.42;color:#aeb8c7;margin-top:24px;max-width:40ch;font-weight:400}
+  .chips{display:flex;gap:12px;margin-top:34px;flex-wrap:wrap}
+  .chip{font-family:'JetBrains Mono';font-size:16px;color:#cdd6e3;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);padding:9px 15px;border-radius:999px}
+  .chip b{color:#fff;font-weight:500}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:middle}
+  .bottom{display:flex;align-items:center;gap:22px;color:#8792a3;font-size:17px}
+  .bottom .kv{display:flex;align-items:center;gap:9px}
+  .sep{width:1px;height:18px;background:rgba(255,255,255,.16)}
+  /* right motif: framework pillars feeding plans */
+  .motif{position:absolute;right:74px;top:150px;width:300px;height:330px;opacity:.9}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="mark"></div>
+    <div class="brand">Alignment Workbench <span>Hulhumalé · HDC</span></div>
+  </div>
+
+  <svg class="motif" viewBox="0 0 300 330" fill="none">
+    <g stroke="#3d4a63" stroke-width="1.5" opacity=".8">
+      <path d="M60 165 C120 60, 150 60, 235 40"/>
+      <path d="M60 165 C120 110, 150 110, 235 105"/>
+      <path d="M60 165 C120 165, 150 165, 235 165"/>
+      <path d="M60 165 C120 220, 150 220, 235 225"/>
+      <path d="M60 165 C120 275, 150 275, 235 290"/>
+    </g>
+    <circle cx="60" cy="165" r="18" fill="#3a54e0"/>
+    <circle cx="235" cy="40" r="11" fill="#34d399"/>
+    <circle cx="235" cy="105" r="11" fill="#f87171"/>
+    <circle cx="235" cy="165" r="11" fill="#fbbf24"/>
+    <circle cx="235" cy="225" r="11" fill="#34d399"/>
+    <circle cx="235" cy="290" r="11" fill="#f87171"/>
+  </svg>
+
+  <div class="mid">
+    <div class="eyebrow">Framework ↔ Master Plans</div>
+    <h1>Master&nbsp;Plan <b>Alignment</b></h1>
+    <p class="sub">Where the Hulhumalé plans overlap, conflict, and leave gaps against the Urban Development Framework.</p>
+    <div class="chips">
+      <span class="chip"><b>8</b> pillars · <b>33</b> objectives · <b>133</b> directions</span>
+      <span class="chip"><span class="dot" style="background:#f87171"></span><b>8</b> gaps</span>
+      <span class="chip"><span class="dot" style="background:#fbbf24"></span><b>18</b> overlaps</span>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="kv"><span class="dot" style="background:#8aa2ff;margin:0"></span> Interactive alignment mind map</div>
+    <div class="sep"></div>
+    <div class="kv">github.com/iharfa/master-plans</div>
+  </div>
+</body>
+</html>
