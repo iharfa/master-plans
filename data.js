@@ -522,4 +522,257 @@ const SPD_INDEX = (() => {
   return {list, pillarById};
 })();
 
-if (typeof module!=="undefined") module.exports={FRAMEWORK,PLANS,GAPS,OVERLAPS,INTEGRITY,DOC_ALIGN,SPD_INDEX};
+/* ---- 5. MIND MAP -----------------------------------------------------------
+   Curated collapsible-tree model for the Document Mind Map view: the six plans,
+   the shared foundation, an 18-domain overlap map (each node carries verbatim
+   plan quotes + an alignment insight), and cross-cutting recommendations.
+   MM_PLAN = the mind map's own plan taxonomy (U/S/T/L/G/E — Landscape 2026 and
+   Garden Island 2024 kept distinct while they merge). MM_SC = status colours. */
+const MM_PLAN = {
+  U:{name:"Hulhumalé Urban Development Masterplan (Booklet v3)",color:"#6366f1"},
+  S:{name:"Social Development Masterplan (v01, 29/03/2026)",color:"#ec4899"},
+  T:{name:"Hulhumalé Transport Masterplan (draft)",color:"#0ea5e9"},
+  L:{name:"Garden Island — Landscape Masterplan (v01, 29/03/2026)",color:"#f59e0b"},
+  G:{name:"Garden Island 2024 (supporting source to Landscape MP '26)",color:"#b45309"},
+  E:{name:"Environment Master Plan V2 (Draft 1.0, June 2026)",color:"#22c55e"}
+};
+const MM_SC = {green:"var(--ok)",amber:"var(--med)",red:"var(--hi)",blue:"var(--accent)",plan:"var(--muted)",root:"var(--ink)",group:"var(--ink-2)"};
+
+const MINDMAP = {
+name:"HDC · Hulhumalé Masterplan System", status:"root", detail:{
+ summary:"Planning documents produced under HDC's Planning Division: one umbrella Urban Development Masterplan, four sector plans (Social, Transport, Landscape 2026 — primary, Environment), and one supporting source document (Garden Island 2024, feeding the Landscape MP). This map shows where they overlap, where they duplicate each other, and where alignment would produce a more cohesive combined output.",
+ quotes:[],
+ insight:"The plans share a genuine common foundation (joint stakeholder consultations, same GIS base, same city context) but were drafted by different sections with different structures, KPI styles and delivery mechanisms. 8 red-flag duplications and 9 coordination overlaps are mapped below."
+}, children:[
+{name:"The Plans", status:"group", detail:{summary:"Reference branch — the umbrella plan, four sector plans, and one supporting source document (Garden Island 2024, nested under the primary Landscape MP 2026).",quotes:[],insight:""}, children:[
+ {name:"Urban Development MP (umbrella)", status:"plan", plans:["U"], detail:{
+  summary:"The city-wide framework. 8 planning themes; vision, land use, planning principles, urban structure. The natural parent taxonomy for the four sector plans.",
+  quotes:[
+   {p:"U",r:"Vision",t:"To develop Hulhumalé as the primary urban, economic and innovation hub of the Maldives. To create an inclusive, climate resilient city that supports the growing population through sustainable development, world class infrastructure and connected communities."},
+   {p:"U",r:"Themes 01–08",t:"Balances Urban Growth & Spatial Development … Inclusive, Healthy & Livable Communities … Adequate & Affordable Housing … Integrated Infrastructure & Urban Services … Climate Resilience & Environmental Management … Sustainable Mobility & Connectivity … Economic Development & Urban Competitiveness … Urban Governance & Institutional Capacity"}],
+  insight:"This booklet is still structural (many section headings are empty: Urban Profile figures blank, 'Masterplan Strategy' onward is an outline). It should be finished first, because it is the only document positioned to arbitrate between the sector plans."}},
+ {name:"Social Development MP", status:"plan", plans:["S"], detail:{
+  summary:"Most developed sector plan: 4 themes, 22 objectives, 58 actions, 146 sub-actions, with an implementation matrix (indicators, timeframes, responsible parties).",
+  quotes:[
+   {p:"S",r:"Ch.1 Vision",t:"Hulhumalé Aharenge: A Community We Call Home"},
+   {p:"S",r:"B-Summary",t:"Theme 1: Governance, Theme 2: Social Equity and Inclusion, Theme 3: Community Wellbeing and Safety, and Theme 4: Economic Sustainability."},
+   {p:"S",r:"Ch.5",t:"The plan structured across four thematic pillars, comprises a total of 22 objectives, 58 strategic actions, and 146 detailed sub-actions."}],
+  insight:"Strongest numbering discipline of the six (4.x.x.x issues ↔ 5.x.x.x actions). Its cross-referencing convention is worth adopting system-wide. Internal QA items remain: TOC shows two 'Chapter 7' entries, 'Error! Bookmark not defined' fields, and yellow placeholder notes (bus map, flooding & erosion map, tables) still unresolved."}},
+ {name:"Transport MP", status:"plan", plans:["T"], detail:{
+  summary:"4 themes, each with focus areas and key issues; actions chapter drafted in outline. Explicitly frames itself as the mobility backbone the other plans depend on.",
+  quotes:[
+   {p:"T",r:"Themes 1–4",t:"Theme 1: Efficient and Accessible Public Transportation System … Theme 2: Sustainable Transportation Modes … Theme 3: Intelligent Traffic Management System … Theme 4: Environmental Conservation and Resilience in Transport Planning Systems"},
+   {p:"T",r:"Ch.5, Theme 3",t:"This theme is therefore best understood not as a parallel programme to Themes 01 and 02, but as their operational and technological substrate."}],
+  insight:"Marked '~ DRAFT IN PROGRESS BEYOND THIS POINT ~' after Theme 4 — demand forecasting, costing, M&E and implementation chapters are outlines only. Its Theme 4 is where most of the environmental duplication with the EMP and LDS lives."}},
+ {name:"Landscape MP 2026 (Garden Island) — primary", status:"plan", plans:["L"], detail:{
+  summary:"The primary landscape document. 4 themes with focus areas, actions and quantified KPIs. The Garden Island 2024 initiative sits beneath it as supporting source material used to flesh this plan out.",
+  quotes:[
+   {p:"L",r:"Ch.3 Vision",t:"Garden Island – A Resilient Blue-Green Hulhumale' for People, Nature, and Community."},
+   {p:"L",r:"Ch.5",t:"These themes comprise: Enhancing Pedestrian Experience … Green Development … Green Forest … and Green Economic Activation."}],
+  insight:"Sets the most aggressive numeric KPIs of any plan (canopy %, corridor km, SME counts). Several of those KPIs belong operationally to other sections — flagged per-node below. As the primary document, it should absorb the 2024 initiative's delivered work and completed pilots as its implementation baseline."},
+  children:[
+   {name:"Supporting: Garden Island 2024", status:"plan", plans:["G"], detail:{
+    summary:"Supporting source document, not a standalone plan. June 2024 implementation deck: 5 objectives with action trackers, many marked COMPLETED (alleyway rejuvenation, shaded pedestrian paths stage 1–2, wayfinding proposals). Its content feeds directly into the Landscape MP 2026.",
+    quotes:[
+     {p:"G",r:"Objectives",t:"Enhancing Pedestrian Experience Within the City … Quality of Urban Streetscape … Green Developments … Introducing Community Gathering Spots … Economic Drive"},
+     {p:"G",r:"Action 2.2.2",t:"Plant 25,000 trees by 2025"}],
+    insight:"Treat as the implementation baseline and evidence source for LDS 2026: completed actions become the plan's delivered baseline, in-progress actions carry forward into LDS focus areas, and lapsed targets (the 25,000-tree deadline) get formally restated in the LDS. Where G appears on overlap nodes in this map, it marks delivered or trialled work the primary plans should build on rather than re-propose."}}
+  ]},
+ {name:"Environment MP V2", status:"plan", plans:["E"], detail:{
+  summary:"7 themes built on an Open Environmental Governance + GIS spine; every action has GIS outputs, KPIs and review cycles. The most operationally specified plan.",
+  quotes:[
+   {p:"E",r:"3.2 Vision",t:"To develop Hulhumalé as a climate-ready, low-carbon, resource-efficient, nature-positive and liveable urban island, guided by Open Environmental Governance, GIS-based planning, public accountability and collaboration…"},
+   {p:"E",r:"3.7 Themes",t:"1. Open Environmental Governance, GIS and Public Environmental Data · 2. Coastal, Climate, Water and Disaster Resilience · 3. Blue-Green Infrastructure, Urban Cooling and Biodiversity · 4. Waste, Pollution Prevention and Environmental Health · 5. Low-Carbon Buildings, Energy, Solar and Utility Resilience · 6. Sustainable Mobility, Access and Public Realm · 7. Delivery, Compliance, Partnerships and Public Reporting"}],
+  insight:"Its GIS repository, data classification register, Delivery Unit and Decision Gate are the only whole-of-system delivery machinery in the set. Themes 1 and 7 should serve all six plans, not just the environmental one."}}
+]},
+{name:"Shared Foundation", status:"green", plans:["S","T","L","E"], detail:{
+ summary:"The four sector plans were built from a single joint consultation process and a shared issue-grouping method — a genuinely strong basis for integration that the documents themselves state.",
+ quotes:[
+  {p:"S",r:"Ch.2 Methodology",t:"These consultations were carried out jointly for the four master plans (social, landscape, transport, and environment). In these sessions, the identified issues were grouped into broader categories to develop initial actions to address these challenges."},
+  {p:"T",r:"Ch.3 Methodology",t:"These consultation sessions were conducted in an integrated manner for all four master plans, namely the social, landscape, transport, and environmental master plans."}],
+ insight:"Because the evidence base is shared, the divergence happens downstream — at theme naming, KPI setting and ownership. That's fixable at document level without re-consulting stakeholders. The 194 coded social issues (SMP Sankey) could be re-tagged with a cross-plan ID so every issue traces to exactly one owning action."}},
+{name:"Overlap Map", status:"group", detail:{summary:"18 domains where two or more plans occupy the same territory, grouped in four clusters. Colour = severity.",quotes:[],insight:""}, children:[
+{name:"Environment & Climate", status:"group", detail:{summary:"Seven overlap domains between EMP, LDS, Transport Theme 4, SMP wellbeing actions and UDM Theme 5.",quotes:[],insight:""}, children:[
+ {name:"Urban heat, trees & canopy", status:"red", plans:["L","G","S","E","T","U"], detail:{
+  summary:"All six documents address urban heat and tree cover. Three plans each propose their own city greening plan, and the flagship tree target contradicts itself across the two Garden Island documents.",
+  quotes:[
+   {p:"G",r:"Action 2.2.2 (2024)",t:"Plant 25,000 trees by 2025"},
+   {p:"L",r:"FA 3.1 KPIs (2026)",t:"Plant 25,000 new trees by 2040. Achieve minimum 30% citywide canopy cover. 100% of major roads lined with shade trees."},
+   {p:"S",r:"Sub-action 5.3.4.2.1",t:"Develop a city-level plan to increase green cover as a strategy for urban heat mitigation."},
+   {p:"E",r:"Theme 3 actions",t:"Produce annual urban heat map … Identify and upgrade cooling corridors … At least 5 priority corridors upgraded by year 5."},
+   {p:"T",r:"Theme 4, Focus 05",t:"Impervious materials used for paving, leads to excessive heat retention and poor water absorption"},
+   {p:"U",r:"Theme 02",t:"The limited availability of mature trees throughout many parts of the island reduces natural shade, resulting in higher pedestrian exposure to heat…"}],
+  insight:"Duplication flag 1: the same 25,000-tree figure carries a 2025 deadline in the 2024 supporting deck and a 2040 deadline in the primary LDS, with no reconciliation. Since the LDS is primary, it should state how many trees the 2024 initiative actually planted as its baseline, then define the 2040 figure as net additional trees. Duplication flag 2: SMP 5.3.4.2.1 (a green cover plan), LDS Theme 3 (an Urban Forest Management Plan) and EMP Theme 3 (cooling corridor programme) are three versions of one programme. Recommended split: EMP owns the evidence (heat map, tree inventory, canopy map — it already specifies them); the LDS owns the single Urban Greening & Cooling Programme, seeded with the 2024 planting record; SMP and Transport delete their duplicate planning actions and cross-reference instead."}},
+ {name:"Green verges & passive drainage", status:"amber", plans:["E","T","L","S"], detail:{
+  summary:"Green verges are claimed by four plans for four competing functions: drainage performance (EMP), driveway/stormwater conflict (Transport), landscape buffers (LDS) and community gardening pressure (SMP). No plan owns the arbitration.",
+  quotes:[
+   {p:"E",r:"Theme 2 action",t:"Audit green verges and passive drainage — Assess compaction, blockage, surface gradient, soil condition and vegetation health. Prioritise rehabilitation."},
+   {p:"T",r:"Theme 4, Focus 01",t:"Green verges are been compromised for driveways and infrastructure expansion. Lack of bioswales for stormwater filtration at common flood zones."},
+   {p:"L",r:"FA 1.3",t:"Establish green verges and landscape buffers."},
+   {p:"S",r:"Ch.4 (photo caption)",t:"Planting by residents within green verge areas has been reported to create challenges for the passive drainage system. In some cases, root spreading has also contributed to damage to surrounding infrastructure and utilities."}],
+  insight:"Write one Green Verge Policy that rules on the four competing uses. Sequence already exists implicitly: EMP audit first (condition + drainage function), then LDS sets the planting/design standard, Transport sets driveway crossing rules, SMP allocates sanctioned community-gardening verges (it already flags 'lack of community garden spaces, and illegal gardening' as issue 4.3.2.11). Without a single policy, the four plans will keep generating contradictory verge interventions."}},
+ {name:"Flooding, drainage & SuDS", status:"amber", plans:["E","T","L","S","U"], detail:{
+  summary:"Bioswales, rain gardens and drainage upgrades appear in three plans; EMP maps pooling; SMP and UDM restate the risk. Complementary in intent, but the LDS carries a flood-reduction KPI it cannot deliver alone.",
+  quotes:[
+   {p:"L",r:"FA 3.4",t:"Integrate bioswales and rain gardens. Develop green infrastructure corridors. … 50% reduction in localized flooding."},
+   {p:"T",r:"Theme 4, Focus 01",t:"Impervious road infrastructure increases localized flooding. Disregard for Stormwater retention systems in parking areas."},
+   {p:"E",r:"Theme 2 action",t:"Map water pooling hotspots — Use public reports, field checks, rainfall events and drone observations to validate pooling locations and causes."},
+   {p:"S",r:"Sub-action 5.3.4.1.2",t:"Incorporate required measures to improve living conditions, reduce flood risks, strengthen drainage systems, and safeguard homes and property."}],
+  insight:"A '50% reduction in localized flooding' KPI sits in the Landscape plan, but drainage engineering sits with Utilities and the pooling evidence sits in the EMP. Move the flood-reduction KPI to the EMP (which has the hotspot baseline to measure it) and let the LDS carry only the green-infrastructure delivery KPIs (bioswales installed, permeable area added)."}},
+ {name:"Waste & source segregation", status:"red", plans:["S","E","L","U"], detail:{
+  summary:"SMP and EMP each independently commission neighbourhood segregation pilots — the same intervention, two owners, two KPI sets.",
+  quotes:[
+   {p:"S",r:"Sub-action 5.3.4.3.2",t:"Conduct neighborhood-level segregation pilots and periodic waste collection campaigns."},
+   {p:"E",r:"Theme 4 action + KPI",t:"Pilot source segregation — Pilot organics, recyclables, residual waste and special waste separation in residential clusters, schools, public buildings and commercial areas. … Segregation pilots launched in at least 3 residential clusters and 5 institutions. Contamination rate below 20% in pilot areas within 12 months."},
+   {p:"L",r:"FA 1.5",t:"Upgrade waste infrastructure."}],
+  insight:"Duplication flag: identical pilots. Assign the pilot to the EMP — it alone has the delivery mechanism (WAMCO data-sharing MOU, quarterly performance dashboard, contamination KPI). SMP retains what it does uniquely: behaviour change (5.3.4.3.3 student/household engagement, 5.3.4.3.4 awareness materials). LDS keeps only the physical bin/point provision inside streetscape standards."}},
+ {name:"Air quality, dust & noise sensors", status:"red", plans:["S","E","T"], detail:{
+  summary:"Three plans independently propose building an environmental sensor network for the same locations (construction zones, high-density areas).",
+  quotes:[
+   {p:"S",r:"Sub-action 5.1.1.3.2 (Ch.7 matrix)",t:"Install urban air quality sensors and public dashboards, particularly near construction zones and high-activity areas, to support public health awareness"},
+   {p:"E",r:"Theme 4 action",t:"Deploy air quality, dust and noise sensors — Install sensors in construction zones, Industrial Zone, high-density areas, schools, major roads and coastal public spaces."},
+   {p:"T",r:"Theme 4, Focus 03",t:"No pollution monitoring systems installed across Hulhumale' leading to a significant lack in relevant data to make informed decisions"}],
+  insight:"Duplication flag: three sensor networks for one island. The EMP's Section 4.8 IoT Environmental Sensor Network is the only fully specified version (sensor types, priority locations, validation, GIS linkage) — make it the single network. SMP and Transport become data consumers: SMP gets the public health dashboard feed, Transport gets construction-dust and roadside pollution feeds for enforcement."}},
+ {name:"Green buildings & solar", status:"amber", plans:["E","S","G","U"], detail:{
+  summary:"The EMP mandates a performance standard; the SMP 'encourages' practices; the 2024 deck proposed an incentive. Mandatory vs voluntary has never been decided.",
+  quotes:[
+   {p:"E",r:"Theme 5 action + KPI",t:"Develop Hulhumalé Green Building Performance Standard — Set local standards for passive cooling, shading, glazing, ventilation, lighting, cooling systems and water efficiency. … 100% new major developments screened against green building criteria."},
+   {p:"S",r:"Sub-action 5.3.4.1.3",t:"Encourage green building practices that enhance energy efficiency and environmental performance."},
+   {p:"G",r:"Action 3.2 (2024)",t:"Green Building Incentive"}],
+  insight:"Pick the instrument: the EMP's mandatory screening standard is the stronger and more measurable path; fold the 2024 incentive idea into it as the compliance carrot (expedited approvals — which SMP 5.2.1.1.2 separately proposes as a planning incentive). Rewrite SMP 5.3.4.1.3 to reference the EMP standard rather than a parallel voluntary track. Solar overlap is minor and healthy: EMP maps solar potential; Transport's solar streetlights (Theme 4 Focus 04) should draw sites from that map."}},
+ {name:"Disaster preparedness", status:"green", plans:["S","E","U"], detail:{
+  summary:"Cleanest division of labour in the set: SMP writes the plan and communications; EMP maps the spatial layers; both build on the same DMP/HVCA work.",
+  quotes:[
+   {p:"S",r:"Sub-action 5.3.4.4.1",t:"Formulate, validate, and publish a comprehensive local disaster preparedness and response plan. The detailed plan must clearly outline roles, protocols, and emergency procedures to ensure community safety and resilience."},
+   {p:"E",r:"Theme 2 action",t:"Map disaster preparedness layers — Integrate DMP and HVCA outputs. Publish assembly points, public shelter areas and relief management areas where appropriate."},
+   {p:"S",r:"Sub-action 5.1.1.3.4",t:"Establish and regularly update a registry and spatial mapping of vulnerable populations, including elderly persons, persons with disabilities, migrant populations, and high-risk households, to support targeted planning, evacuation, and emergency planning."}],
+  insight:"Keep the split, add one stitch: the SMP's vulnerable-population registry must live as a single dataset inside the EMP GIS repository under Class 4/5 protection (the EMP's own classification register handles the privacy question SMP doesn't address). Both plans also propose emergency/temporary housing siting — make it one site assessment."}}
+]},
+{name:"Public Realm & Mobility", status:"group", detail:{summary:"Seven domains — the densest duplication cluster, because Landscape, Transport, Social and Environment all touch streets.",quotes:[],insight:""}, children:[
+ {name:"Walkability & pedestrian corridors", status:"red", plans:["L","T","S","E","U","G"], detail:{
+  summary:"Every plan proposes pedestrian corridor upgrades, each with its own target: LDS wants 5 km, EMP wants 5 corridors, Transport wants pedestrian priority zones, SMP wants continuous sidewalks — with no shared corridor list.",
+  quotes:[
+   {p:"L",r:"FA 1.1 KPIs",t:"90% of residents within 300m of a safe pedestrian route. … Minimum 5km of upgraded pedestrian corridors."},
+   {p:"E",r:"Theme 6 action + KPI",t:"Upgrade priority walking corridors — Deliver shade, crossings, lighting, seating, planting, accessibility and public realm upgrades. … At least 5 priority walking corridors upgraded by year 5."},
+   {p:"T",r:"Theme 2, Focus 01",t:"…advances the identification, design, and progressive implementation of Pedestrian Priority Zones within Hulhumalé's highest-activity locations…"},
+   {p:"S",r:"Sub-action 5.3.5.1.1",t:"Improve pedestrian infrastructure through planning, development and maintenance of uninterrupted sidewalks, raised and signalized crossings"},
+   {p:"G",r:"Actions 1.1–1.2 (2024)",t:"Rejuvenation of Alleyways … Shaded Pedestrian Pathway — COMPLETED"}],
+  insight:"Duplication flag: four live corridor programmes plus a completed 2024 one. Fix in three moves: (1) adopt the EMP's walkability indicator framework as the single measurement standard — it's the only plan that defines indicators; (2) publish one Priority Walking Network map (EMP already commits to mapping it) that all plans' KPIs reference; (3) split delivery — Transport owns crossings/priority zones/traffic interface, Landscape owns shade/surface/streetscape, SMP drops 5.3.5.1.1 to a cross-reference. Reconcile '5 km' vs '5 corridors' into one target on that map."}},
+ {name:"Universal accessibility (PWD)", status:"red", plans:["S","L","T","E"], detail:{
+  summary:"SMP and LDS contain near-identical retrofit actions, drafted independently. Transport and EMP add two more layers.",
+  quotes:[
+   {p:"S",r:"Sub-action 5.2.5.1.1",t:"Retrofit public spaces and buildings with ramps, lifts, tactile paving, and inclusive signage."},
+   {p:"L",r:"FA 1.2",t:"Retrofit existing parks and streets. Install tactile guidance systems. Provide accessible crossings and public amenities. … 80% of existing public spaces upgraded by 2035."},
+   {p:"E",r:"Theme 6 action",t:"Map accessibility barriers — Identify broken footpaths, missing ramps, unsafe crossings, poor lighting and obstruction points."},
+   {p:"T",r:"Theme 1, Focus 04",t:"Social equity and universal accessibility"}],
+  insight:"Duplication flag — but also the best chaining opportunity in the set, because each plan holds a different piece: SMP holds the demand data (908 PWDs mapped by residence, Jan 2024, concentrated in Hiyaa and Flats 1–7); EMP holds the barrier-mapping method; LDS holds the retrofit KPI and design standard; Transport holds the transit accessibility piece. Chain them into one Universal Access Programme: SMP data → EMP barrier map → prioritised LDS/Transport retrofit pipeline, with the LDS '80% by 2035' as the single shared KPI."}},
+ {name:"Wayfinding & signage", status:"red", plans:["L","S","T","G"], detail:{
+  summary:"A citywide wayfinding system is proposed in three live plans, and the 2024 deck already ran a wayfinding-board action.",
+  quotes:[
+   {p:"L",r:"FA 1.4",t:"Install citywide wayfinding system. Develop district identity markers. Introduce Park information signage. Establish digital navigation integration."},
+   {p:"S",r:"Sub-action 5.3.5.1.2",t:"Design and install clear, consistent road and public space signage to support wayfinding, and improve road usage and safety."},
+   {p:"G",r:"Action 1.3.4 (2024)",t:"Introduce Wayfinding boards — Propose road signboard and park wayfinding boards"},
+   {p:"S",r:"Issue 4.2.1.5",t:"Lack of inclusive wayfinding and navigational systems"}],
+  insight:"Duplication flag: audit what the 2024 action actually installed before any plan re-scopes it. Then one wayfinding design standard, owned by Landscape (identity + parks) with Transport supplying the road-safety signage layer. SMP's contribution should narrow to the inclusivity requirement (tactile, multilingual — consistent with its digital-divide objective 5.2.4) rather than a parallel installation action."}},
+ {name:"Cycling networks", status:"amber", plans:["T","L","E","S","G"], detail:{
+  summary:"Recreational trails (LDS), commuter infrastructure (Transport), a network gap map (EMP) and fitness loops (SMP) — four cycling geometries that have never been drawn on one map.",
+  quotes:[
+   {p:"T",r:"Theme 1, Focus 01",t:"Insufficient Cycling Infrastructure … Expand Cycling Infrastructure"},
+   {p:"L",r:"FA 2.3 KPI",t:"Minimum 10km of recreational trails."},
+   {p:"E",r:"Theme 6 action",t:"Map cycling and micromobility network — Identify safe corridors, parking points, conflict areas and links to public facilities."},
+   {p:"S",r:"Sub-action 5.3.3.3.1",t:"…development of fitness areas, walking and cycling loops."},
+   {p:"S",r:"Ch.4, 4.3.5",t:"Cycling is theoretically encouraged, but no dedicated lanes currently exist, forcing riders who are mostly expats, to share roads with motor vehicles."}],
+  insight:"Transport should own the network plan (it's the only plan treating cycling as a transport mode, incl. bicycle parking at transit stops); LDS supplies the recreational loop layer as a subset; EMP's conflict-area mapping becomes the safety evidence. One network map, two layers (commute + recreation), one delivery owner."}},
+ {name:"Public transport & bus stops", status:"green", plans:["T","S","E","U"], detail:{
+  summary:"Mostly complementary: Transport plans the service; SMP and EMP add access and audit layers. Small restatement risk around bus stops.",
+  quotes:[
+   {p:"T",r:"Theme 1",t:"This theme establishes public transportation as the primary and preferred mode of travel in Hulhumalé — not merely as an alternative to private vehicles, but as the backbone of daily urban mobility."},
+   {p:"S",r:"Sub-action 5.3.5.3.1",t:"Improve pedestrian access to bus stops through safe and accessible pathways, and well developed and maintained shaded bus stops."},
+   {p:"E",r:"Theme 6 KPI",t:"Public transport access map published. Bus stop accessibility and shade audit completed."}],
+  insight:"Keep Transport as sole owner of routes, frequency, fares, BRT and hub design; convert SMP 5.3.5.3 and the EMP bus-stop audit into inputs to it (the EMP audit is genuinely useful — it gives Transport a shade/accessibility baseline it doesn't collect itself). SMP's issue evidence (Sinamalé Bridge peak-hour outbound commuting data) belongs in Transport's demand chapter, which is currently an outline."}},
+ {name:"Street lighting & CCTV", status:"amber", plans:["S","T","E"], detail:{
+  summary:"SMP audits and expands lighting/CCTV for safety; Transport separately plans an energy-efficient/solar lighting transition; EMP handles the energy angle. Same poles, three programmes.",
+  quotes:[
+   {p:"S",r:"Sub-action 5.3.1.1.1",t:"Conduct a city-wide lighting audit across streets, parks, and public spaces to assess coverage, functionality, and gaps."},
+   {p:"S",r:"Ch.4 (CCTV caption)",t:"Currently, a total of 322 bullet cameras are planned for Phase 1 and 274 for Phase 2."},
+   {p:"T",r:"Theme 4, Focus 04",t:"Lack of solar powered streetlights … Critical intersections fixed with similar systems as low traffic roads or intersections"}],
+  insight:"Merge into one Street Lighting Programme with two objectives (safety coverage + energy transition): SMP's audit defines the gap map, Transport's solar/LED transition defines the technology pathway, EMP's solar potential map defines siting. CCTV stays with SMP/Police but should be logged in the same GIS asset layer so lighting and camera gaps are assessed together — SMP already links both to its Urban Management System."}},
+ {name:"Beach & waterfront access", status:"red", plans:["S","L","U","G"], detail:{
+  summary:"The same public-access-vs-commercial-use policy is written twice, in almost interchangeable words, in the SMP and the LDS.",
+  quotes:[
+   {p:"S",r:"Sub-action 5.1.3.3.2",t:"Ensure free public access and uninterrupted pedestrian movement for citizens in public spaces. (eg. open-use beach frontage)"},
+   {p:"L",r:"FA 4.2 KPI",t:"Maintain 100% public shoreline access."},
+   {p:"S",r:"Issue 4.2.4.1",t:"Privatization or restricted access to public spaces"},
+   {p:"L",r:"FA 4.2 issue",t:"Conflicts between businesses and public access."}],
+  insight:"Duplication flag: one enforceable Beachfront Commercial Use Policy is needed, and it belongs under SMP Theme 1 Governance — that's where HDC's leasing, zoning controls (5.1.3.3.1) and enforcement limits as an SOE are analysed. LDS keeps the spatial framework (waterfront activation zones, beach parks, swimming zones) and inherits the '100% public shoreline access' KPI as the measure of the SMP policy's success. Also reconcile physical access: SMP documents the sand-buried Ruhgandu 3 ramp; LDS FA 2.5 plans beach access improvements — same asset, two plans."}}
+]},
+{name:"Community & Economy", status:"group", detail:{summary:"Three domains where the Social and Landscape plans compete for the same community and micro-economy space.",quotes:[],insight:""}, children:[
+ {name:"Urban agriculture & food", status:"red", plans:["S","L","E","G"], detail:{
+  summary:"Community gardens and local-produce actions appear in three live plans, while the SMP itself documents that a working allocation model (UNDP SEEDS/PDSAE) already exists.",
+  quotes:[
+   {p:"S",r:"Sub-action 5.4.4.1.3",t:"Pilot urban farming and gardening programs in partnership with schools, NGOs, and households."},
+   {p:"L",r:"FA 4.4",t:"Develop community gardens. Introduce edible landscapes. Support local produce markets. … Community gardens in all neighbourhoods."},
+   {p:"E",r:"Theme 3 focus areas",t:"Community gardens and public green space quality"},
+   {p:"S",r:"Ch.4 (caption)",t:"Under the SEEDS project, 16 farming lots of approximately 600 sqft each were developed, while the PDSAE project developed 12 farming lots of approximately 707 sqft each. … a total of 48 farmers under SEEDS and 36 farmers under PDSAE."}],
+  insight:"Duplication flag: three plans propose 'pilots' for something that already ran — 28 lots, 84 farmers under SEEDS/PDSAE. Scale that model instead of piloting again: LDS allocates the land (its neighbourhood coverage KPI is the right one), SMP runs the social programme (applicant categories: women, youth/PWD — its existing framework), EMP monitors green-space condition. The SMP's separate food-affordability assessment (5.4.4.2.3) is unique and stays."}},
+ {name:"SME spaces, markets & activation", status:"amber", plans:["S","L","U","G"], detail:{
+  summary:"Pop-up markets, SME hubs and multi-purpose rentable spaces appear in both SMP and LDS; only the LDS quantifies them.",
+  quotes:[
+   {p:"L",r:"FA 4.1 KPIs",t:"Minimum one SME hub per neighbourhood. 100 SME spaces delivered by 2035. 80% occupancy rate."},
+   {p:"S",r:"Sub-action 5.4.2.1.4",t:"Design and facilitate the development of rentable multi-purpose spaces within residential clusters for business activities, events, and local markets."},
+   {p:"S",r:"Sub-action 5.3.1.3.3",t:"Activate public spaces through community-oriented uses such as pop-up events, weekend markets, cultural fairs, and art installations."},
+   {p:"L",r:"FA 4.1",t:"Introduce flexible pop-up market zones. Establish community marketplace programme."}],
+  insight:"Not a conflict, but two half-programmes. Adopt the LDS numbers (100 spaces / 2035 / 80% occupancy) as the shared target; split roles by competence — LDS designs the landscape-integrated market spaces, SMP/Business Development runs leasing, vendor regulation (its 5.1.3.3 vendor zoning) and event programming. One activation calendar prevents the two sections from booking the same parks."}},
+ {name:"Public space programming & culture", status:"amber", plans:["S","L","G","U"], detail:{
+  summary:"Cultural events, community stewardship and space activation run in parallel between SMP Theme 3 and LDS/2024 community actions.",
+  quotes:[
+   {p:"S",r:"Sub-action 5.3.2.4.1",t:"Organize and support periodic cultural and intercultural events in public spaces, including performances, cultural showcases presenting different island communities unique traditions, food, and crafts…"},
+   {p:"L",r:"FA 3.5",t:"Community tree planting programme. Urban agriculture initiatives. Environmental awareness campaigns. … 5,000 residents participating annually."},
+   {p:"G",r:"Objective 4 (2024)",t:"Public participation to develop hangout spots … Introduce Urban Furniture"},
+   {p:"S",r:"Sub-action 5.3.2.4.4",t:"Integrate cultural elements into public space design to reflect local identity and heritage."}],
+  insight:"SMP owns programming and community leadership (its CSR team is named responsible party throughout Ch.7); LDS owns the physical stage. The one action that genuinely needs a joint owner is SMP 5.3.2.4.4 (cultural elements in public space design) — it's a design directive sitting in a social plan; move its delivery to LDS with SMP as content advisor. LDS's '5,000 residents participating annually' should be counted through SMP's community engagement indicators, not a separate count."}}
+]},
+{name:"Governance, Data & Systems", status:"group", detail:{summary:"Three domains where the biggest single alignment win lives: the plans describe one digital backbone three different ways.",quotes:[],insight:""}, children:[
+ {name:"GIS / central data platform", status:"amber", plans:["S","E","T","U"], detail:{
+  summary:"SMP proposes a centralized data hub plus an Urban Management System; EMP proposes an Environmental GIS Repository that explicitly ingests SMP layers; Transport needs a traffic data platform; UDM calls for integrated data systems. These are one system described four ways.",
+  quotes:[
+   {p:"S",r:"Sub-action 5.1.1.3.1",t:"Develop a centralized data hub or GIS-based planning system, regularly updated and maintained as a comprehensive tool for planning and decision-making."},
+   {p:"S",r:"Sub-action 5.1.4.1.1",t:"Develop a centralized Urban Management System to integrate urban data, monitor service delivery, and support internal and external decision-making. The system is to be connected to the centralized data hub or GIS-based planning system"},
+   {p:"E",r:"Theme 1 action",t:"Establish Hulhumalé Environmental GIS Repository — Create central GIS repository. Compile HDC, HVCA, DMP, SMP, survey and monitoring layers."},
+   {p:"T",r:"Theme 3",t:"…it generates the continuous stream of operational data that underpins evidence-based planning across this entire Master Plan…"},
+   {p:"U",r:"Theme 08",t:"…improved planning processes, digital governance tools, integrated data systems, and more coordinated decision-making."}],
+  insight:"Highest-value alignment in the whole set. The EMP is the only plan that specifies the architecture (owners, metadata, update cycles, five-class data classification, publication formats, MOUs with WAMCO/MWSC/STELCO/MTCC) — and it already names SMP layers as inputs. Declare one corporate GIS platform using the EMP Theme 1 architecture, with the SMP's Urban Management System and Transport's ITS as functional modules on top of it. Otherwise HDC funds three repositories holding the same basemaps."}},
+ {name:"Complaints & grievance", status:"amber", plans:["S","E","T"], detail:{
+  summary:"SMP builds the resident-facing grievance system; EMP builds GIS complaint logging with public six-month summaries; Transport wants route feedback kiosks. Three intakes for one resident.",
+  quotes:[
+   {p:"S",r:"Sub-action 5.1.2.2.1",t:"Maintain an accessible grievance redress system with direct routing to relevant teams. Enable residents to report issues through multiple channels (online portal, hotline, QR-code location tagging)"},
+   {p:"E",r:"Theme 7 action",t:"Log public complaints in GIS — Record complaint type, broad location, status, response time and resolution. Keep detailed records internal. … Six-month public summaries published."},
+   {p:"T",r:"Public Engagement actions",t:"Crowdsourced Feedback on Routes and Schedules … Establish Feedback Kiosks … Feedback Analytics Dashboard"}],
+  insight:"One pipeline, three views: SMP owns the front door (channels, 24-hr call centre, routing, response-time SLAs — all already specified); EMP owns the GIS log and the public transparency layer (its six-month anonymised summaries are the accountability mechanism SMP's issue 4.1.2 asks for); Transport subscribes to the transport-tagged complaint stream instead of building kiosks. The QR-code location tagging in SMP maps naturally onto EMP's GIS complaint layer — the two sub-actions were written for each other without knowing it."}},
+ {name:"Monitoring, KPIs & delivery units", status:"amber", plans:["S","E","T","L","U"], detail:{
+  summary:"Each plan defines its own monitoring machinery: SMP an indicator matrix, EMP a Delivery Unit + Decision Gate + dashboard, Transport an M&E framework (outline), LDS bare KPIs. KPI styles are incompatible across plans.",
+  quotes:[
+   {p:"E",r:"Theme 7 actions",t:"Establish EMP Delivery Unit — Create a small unit inside Planning Division to track implementation, coordinate teams and prepare reports. … Introduce GIS-Based Environmental Decision Gate — Screen major approvals, land use changes, infrastructure projects, public realm works, utility works and major planning deviations against EMP layers."},
+   {p:"S",r:"Ch.9",t:"Developed actions will be executed across short-, medium-, and long-term phases, to achieve the objectives, supported by regular monitoring, evaluation, and adaptive learning."},
+   {p:"S",r:"Issue 4.1.1.6",t:"Weak monitoring and lack of improvement mechanisms (MEL)"},
+   {p:"L",r:"FA 1.1 KPI",t:"Reduction in pedestrian-related accidents by 50%."}],
+  insight:"Broaden the EMP Delivery Unit into a Masterplan Delivery Unit tracking all four sector plans in one master action tracker (the EMP's Appendix C format already exists). Extend the Decision Gate beyond environmental layers so a single approval screening covers social, transport and landscape requirements too — otherwise a project passes four separate gates or none. KPI reconciliation is needed: LDS claims a 50% pedestrian-accident reduction, but accident data and enforcement sit with Transport/Police; several LDS KPIs measure outcomes other sections deliver."}}
+]}
+]},
+{name:"Alignment Recommendations", status:"group", detail:{summary:"Cross-cutting moves that would turn six documents into one coherent system. All blue nodes are insight, not original text.",quotes:[],insight:""}, children:[
+ {name:"1 · UDM's 8 themes as master taxonomy", status:"blue", detail:{summary:"",quotes:[],
+  insight:"The sector plans use 4, 4, 4 and 7 themes with overlapping names ('Governance' appears in SMP and UDM; 'Economic Sustainability' in SMP vs 'Economic Development & Urban Competitiveness' in UDM; three plans have a sustainability/environment theme). Map every sector theme to one of the UDM's eight, and add a one-page crosswalk matrix to each plan. This costs a table per document and eliminates the reader's biggest orientation problem when using the plans together."}},
+ {name:"2 · One GIS backbone (EMP architecture)", status:"blue", detail:{summary:"",quotes:[],
+  insight:"Adopt EMP Theme 1 (repository, classification register, publication pathway, service-provider MOUs) as the corporate data platform for all plans. SMP's Urban Management System, Transport's ITS, and LDS's tree inventory become modules/layers, not systems. This single decision collapses roughly a dozen duplicated data actions across the four sector plans."}},
+ {name:"3 · Reconcile conflicting KPIs", status:"blue", detail:{summary:"",quotes:[],
+  insight:"Priority conflicts to resolve in the next revision: (a) 25,000 trees by 2025 (Garden Island '24) vs by 2040 (LDS '26) — state the planted baseline and restate the target; (b) '5 km of pedestrian corridors' (LDS) vs '5 priority walking corridors by year 5' (EMP) — one corridor map, one target; (c) LDS's 50% flood-reduction and 50% accident-reduction KPIs measure outcomes owned by EMP/Utilities and Transport/Police respectively — move outcome KPIs to the owning plan, keep output KPIs (km built, trees planted) in LDS; (d) segregation pilot KPIs exist in both SMP and EMP — keep EMP's (they're measurable: 3 clusters, 5 institutions, <20% contamination)."}},
+ {name:"4 · Flesh out LDS '26 from Garden Island '24", status:"blue", detail:{summary:"",quotes:[],
+  insight:"Landscape MP 2026 is the primary document; Garden Island 2024 is its supporting source. The LDS should be fleshed out from it in three ways: (1) absorb the 2024 deck's completed actions (alleyways, shaded paths, adopt-a-tree, wayfinding proposals) as the plan's delivered baseline — the LDS executive summary is still '(TO BE CONTINUED)' and this is the material to build it with; (2) carry forward in-progress 2024 actions into the matching LDS focus areas so nothing is silently dropped; (3) formally restate lapsed 2024 targets inside the LDS (the 25,000-trees-by-2025 figure becomes a stated baseline of trees planted to date, against the LDS's 2040 target). Once absorbed, the 2024 deck can be retired as an annex/reference and stops appearing as a parallel voice in overlap domains."}},
+ {name:"5 · Standardize structure & drafting", status:"blue", detail:{summary:"",quotes:[],
+  insight:"Adopt one skeleton for all four sector plans (the SMP's is closest to complete): Themes → Objectives → Actions → Sub-actions with the SMP's numeric cross-referencing, plus the EMP's per-action table (GIS output, KPI, lead/support, review cycle). Currently Transport uses Focus Areas with bullet issues, LDS uses Focus Areas with KPI lists and no responsible parties, EMP uses tables, SMP uses numbered hierarchy — a combined reading requires four mental models. Also fix drafting-stage artifacts before consolidation: SMP's duplicate Chapter 7, broken bookmarks and highlighted placeholders; Transport's 'DRAFT IN PROGRESS' tail; UDM's empty Urban Profile figures; LDS's '(TO BE CONTINUED)' executive summary."}},
+ {name:"6 · One Masterplan Delivery Unit + shared decision gate", status:"blue", detail:{summary:"",quotes:[],
+  insight:"The EMP's Delivery Unit, master action tracker and GIS Decision Gate are the only delivery machinery specified anywhere in the set. Generalise them: one unit inside Planning Division tracks all ~300+ actions across the four sector plans; one decision gate screens major approvals against social, transport, landscape and environmental layers simultaneously. The alternative — four parallel monitoring regimes — is exactly the 'siloed operations of agencies and internal departments' the SMP flags as issue 4.1.4.1 in others."}}
+]}
+]};
+
+if (typeof module!=="undefined") module.exports={FRAMEWORK,PLANS,GAPS,OVERLAPS,INTEGRITY,DOC_ALIGN,SPD_INDEX,MINDMAP,MM_PLAN,MM_SC};

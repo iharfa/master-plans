@@ -22,12 +22,15 @@ Garden Island and the Landscape Development Masterplan are being merged into one
 
 ## What it does
 
-- **Document network** — an expandable force-directed graph. The Framework's 8 policy
-  pillars form the backbone; every plan's **themes feed the pillars**, so two plans that
-  touch the same pillar are interlinked through it. Click a plan to fan out its **themes**,
-  click a theme to fan out its **actions**. Dashed edges mark cross-plan overlaps
-  (realignment). Hover a pillar to list every theme feeding it across all plans; hover a
-  theme to see the pillars it feeds and its actions.
+- **Document mind map** — a D3 horizontal collapsible tree (`d3.min.js` vendored locally).
+  Branches: the **Urban Development Framework** (8 pillars → objectives, colour-coded by
+  coverage; gap objectives flagged red with the fix; plan badges show which plans feed each
+  pillar — the interlinkage), **The Plans**, the **Shared Foundation**, an **18-domain
+  Overlap Map** (grouped by cluster + severity, each node carrying verbatim plan quotes and
+  an alignment insight), and **Alignment Recommendations**. Click a node to expand and read
+  the detail panel. Legend filters by status; drag to pan, scroll to zoom, and a
+  **full-screen** toggle. Data lives in `MINDMAP` (`data.js`); the framework branch is
+  generated live from `FRAMEWORK` + `GAPS`.
 - **By document** — a per-document worklist: what's missing from each document, concrete
   additions with the exact section to edit, and the realignments it shares with its siblings.
 - **Coverage matrix** — which plan owns or contributes to each framework pillar.
@@ -49,7 +52,8 @@ Garden Island and the Landscape Development Masterplan are being merged into one
 | `index.html` | side-rail workbench shell + the nine views |
 | `data.js` | the framework, the plan crosswalk, the curated gap/overlap/integrity findings, and the per-document `DOC_ALIGN` worklist |
 | `engine.js` | the reusable coverage engine + version tracking (runs on baseline *and* uploads) |
-| `app.js` | rendering / interaction, incl. the SVG network diagram |
+| `app.js` | rendering / interaction, incl. the D3 mind-map tree |
+| `d3.min.js` | D3 v7 (vendored so the mind map works offline) |
 | `styles.css` | Hallmark Workbench design system — Cobalt theme, Space Grotesk + Inter + JetBrains Mono, OKLCH tokens, light + dark |
 
 ## Updating the baseline

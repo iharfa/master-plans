@@ -50,31 +50,33 @@
       <div class="note"><b>Read this as a structural / textual alignment aid</b>, not an engineering or legal review. The curated Gaps, Overlaps and By-Document tabs are the substantive findings; the keyword engine on <em>Upload &amp; Versions</em> is a transparent change-tracker for revisions.</div>
     </section>
 
-    <!-- 02 NETWORK -->
+    <!-- 02 MIND MAP -->
     <section class="view" id="view-network">
       <div class="pagehead">
-        <div class="kicker">Document Network</div>
+        <div class="kicker">Document Mind Map</div>
         <h1>How the documents link</h1>
-        <p class="sub">Every plan's <b>themes</b> feed the Framework's <b>policy pillars</b> — so two plans that touch the same pillar are interlinked through it. <b>Click a document</b> to fan out its themes; <b>click a theme</b> to fan out its actions. Dashed lines mark cross-plan overlaps that need realignment. Hover anything for detail; hover a pillar to see every theme feeding it.</p>
+        <p class="sub">A collapsible map of the six plans and every place they touch each other: the shared foundation, an 18-domain overlap map (grouped by cluster and severity), and cross-cutting recommendations. Click a node to expand it and read the verbatim plan text plus the alignment insight. Start with the red nodes — those are direct duplications or conflicting targets.</p>
       </div>
-      <div class="net-toolbar">
-        <button class="btn ghost sm" id="net-expand">⤢ Expand all plans</button>
-        <button class="btn ghost sm" id="net-collapse">⤡ Collapse all</button>
-        <span class="mini" id="net-hint">Tip: click a coloured plan node to reveal its themes.</span>
-      </div>
-      <div class="net-wrap">
-        <div class="net-canvas" id="net-canvas"></div>
-        <div class="net-side">
-          <h3 id="net-title">The framework backbone</h3>
-          <p class="np" id="net-desc">Pillars P1–P8 sit at the centre. Hover a pillar to see which themes — across every plan — feed it. Click a plan to expand its themes and actions.</p>
-          <div id="net-links"></div>
-          <div class="net-legend">
-            <div class="row"><span class="dotk" style="background:var(--accent)"></span> Framework &amp; pillars</div>
-            <div class="row"><span class="dotk" style="background:#6366f1"></span> Plan · <span class="dotk sm" style="background:#22c55e"></span> theme · <span class="dotk xs" style="background:#22c55e"></span> action</div>
-            <div class="row"><span class="ln" style="border-color:var(--accent)"></span> Theme feeds pillar (interlink)</div>
-            <div class="row"><span class="ln" style="border-color:var(--ink-2)"></span> Hierarchy (governs / delivers)</div>
-            <div class="row"><span class="ln" style="border-color:var(--hi);border-top-style:dashed"></span> Cross-plan overlap (realignment)</div>
+      <div id="net-stage">
+        <div class="mm-toolbar">
+          <div class="mm-legend" id="mm-legend">
+            <span class="mm-lg" data-status="green"><span class="d" style="background:var(--ok)"></span>Aligned</span>
+            <span class="mm-lg" data-status="amber"><span class="d" style="background:var(--med)"></span>Overlap</span>
+            <span class="mm-lg" data-status="red"><span class="d" style="background:var(--hi)"></span>Duplication / conflict</span>
+            <span class="mm-lg" data-status="blue"><span class="d" style="background:var(--accent)"></span>Recommendation</span>
           </div>
+          <div class="mm-spacer"></div>
+          <button class="btn ghost sm" id="mm-fit">⊕ Fit</button>
+          <button class="btn ghost sm" id="mm-fs">⛶ Full screen</button>
+          <button class="btn sm" id="mm-fsclose" hidden>✕ Close full screen</button>
+        </div>
+        <div class="mm-plankey" id="mm-plankey"></div>
+        <div class="mm-wrap">
+          <div class="mm-treewrap">
+            <svg id="treesvg"></svg>
+            <div class="mm-hint">Drag to pan · scroll to zoom · click a node to expand &amp; inspect</div>
+          </div>
+          <aside class="mm-panel" id="mmpanel"><div id="mmbody"></div></aside>
         </div>
       </div>
     </section>
@@ -157,6 +159,7 @@
   </main>
 </div>
 
+<script src="d3.min.js"></script>
 <script src="data.js"></script>
 <script src="engine.js"></script>
 <script src="app.js"></script>
