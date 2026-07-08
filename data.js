@@ -417,6 +417,102 @@ const INTEGRITY = [
     change:"Add an action-crosswalk appendix in the UDMP mapping each theme to the contributing sector-plan actions (this tool generates the baseline)." }
 ];
 
+/* ---- 4. PER-DOCUMENT ALIGNMENT --------------------------------------------
+   For each document: what it owns, what's missing from it, what to add (and
+   where), and how it should realign with sibling documents. Synthesised from
+   GAPS / OVERLAPS / INTEGRITY plus pillar coverage. `where` = the section to edit. */
+const DOC_ALIGN = {
+  UDF:{
+    role:"The overarching policy layer. 8 pillars → 33 objectives → 133 policy directions. Every plan must trace upward to it.",
+    owns:["1","2","3","4","5","6","7","8"],
+    missing:[
+      {sev:"med", text:"No downward crosswalk — policy directions don't record which master plan is meant to deliver them."},
+      {sev:"med", text:"Objective 3.4's directions are mis-numbered 3.3.1–3.3.4, duplicating Objective 3.3."},
+      {sev:"low", text:"Pillar titles contain typos ('nfrastructure', 'competetiveness')."}],
+    add:[
+      {sev:"med", what:"A 'Delivered by' column mapping each objective/direction to the owning master plan + action ID.", where:"New column in the Framework Objectives sheet"},
+      {sev:"med", what:"Renumber Objective 3.4's directions to 3.4.1–3.4.4.", where:"Excel rows for Objective 3.4"},
+      {sev:"low", what:"Correct the pillar-title spelling.", where:"Pillar 4 & Pillar 7 titles"}],
+    realign:[
+      {with:["UDMP"], text:"Framework pillars and UDMP themes are 1:1 — keep the titles identical so the mapping stays legible."}]
+  },
+  UDMP:{
+    role:"The structural spine / booklet. Its 8 themes equal the 8 framework pillars, but it is narrative — it holds no action layer.",
+    owns:["1","2","3","4","5","6","7","8"],
+    missing:[
+      {sev:"high", text:"No action layer: Masterplan Strategy, Priority Projects and KPIs are placeholders and nothing links down to the sector plans."},
+      {sev:"high", text:"Density & mixed-use (1.3) and phased expansion (1.4) are discussed but never actioned."},
+      {sev:"high", text:"Housing supply (3.1) and typology/tenure diversity (3.3) have no delivering action."},
+      {sev:"high", text:"Innovation / knowledge economy (7.3) and investment / competitiveness (7.4) are narrative-only."},
+      {sev:"high", text:"Financial & asset management (8.2) is barely addressed by any document."}],
+    add:[
+      {sev:"high", what:"An action-crosswalk appendix mapping each theme to the contributing sector-plan actions (this tool generates the baseline).", where:"New appendix / Implementation Framework"},
+      {sev:"high", what:"A Land Use & Density action set — measurable targets for density, mixed-use and land optimization.", where:"Theme 01 / Overall Land Use Planning"},
+      {sev:"high", what:"A housing action layer, or a referenced Housing Master Plan (supply, delivery, typology mix, tenure mix).", where:"Theme 03"},
+      {sev:"high", what:"Innovation & knowledge-economy actions (Knowledge Park, incubators, creative industries).", where:"Theme 07"},
+      {sev:"med", what:"Economic-competitiveness plus financial & asset-management actions.", where:"Theme 07 / Theme 08 / Implementation Framework"},
+      {sev:"high", what:"Designate ONE integrated city data platform and reference it as the parent of the sector systems.", where:"Theme 08 Governance"}],
+    realign:[
+      {with:["SMP","HTMP","EMP","LDS"], text:"Add explicit references so each theme names the sector plan(s) that deliver it."}]
+  },
+  SMP:{
+    role:"Sector plan. Primary owner of governance-of-social (Pillar 8), inclusion (Pillar 2) and economic-social (Pillar 7). Rich action layer.",
+    owns:["8","2","7"],
+    missing:[
+      {sev:"med", text:"Duplicate action ID 5.2.1.1.2 appears under Theme 2 (should sit in the 5.2.6 sequence)."},
+      {sev:"low", text:"Innovation / knowledge economy (7.3) isn't picked up despite Social owning the economic-social theme."}],
+    add:[
+      {sev:"low", what:"Consider an objective under 5.4 on innovation / creative-economy support to help close framework gap 7.3.", where:"Theme 4 · Economic Sustainability"},
+      {sev:"med", what:"Fix the duplicate sub-action ID.", where:"Objective 5.2.6"}],
+    realign:[
+      {with:["EMP","HTMP"], text:"Recast the 'Urban Management System' (5.1.4) as a module of the single shared city data platform, not a separate system."},
+      {with:["LDS"], text:"Split SME provision — Social owns enterprise programmes & tenancy; Landscape owns the physical market/SME space. Share one 'SME hub per neighbourhood' target."},
+      {with:["LDS","HTMP","EMP"], text:"Reference the shared Universal Design Standard instead of defining accessibility retrofits independently (5.2.5)."},
+      {with:["LDS","EMP"], text:"Point the cooling / green-cover action (5.3.4.2) to Landscape + Environment targets rather than a standalone measure."}]
+  },
+  HTMP:{
+    role:"Sector plan. Primary owner of mobility (Pillar 6). Four themes: public transport, sustainable modes, intelligent traffic management, green integration.",
+    owns:["6"],
+    missing:[
+      {sev:"low", text:"Transport 'asset management' (road / ITMS) is distinct from framework 8.2 (urban financial & asset management) — it should not be read as covering 8.2."}],
+    add:[
+      {sev:"low", what:"A scope-boundary note clarifying Transport owns network design + standards for walkability & cycling.", where:"Theme 2 · active-mobility introduction"}],
+    realign:[
+      {with:["EMP","SMP"], text:"Recast the 'Smart Mobility Management Platform' (T3) as the mobility module of the shared city data platform."},
+      {with:["LDS","EMP","SMP"], text:"Walkability: Transport owns network + standards; cross-reference Landscape (public realm/shade), Environment (indicators/data), Social (safety)."},
+      {with:["EMP","LDS"], text:"Cycling network: Transport is the owner; Environment supplies conflict/gap data; Landscape supplies greened links."},
+      {with:["LDS"], text:"Green verges / roadside canopy (T4) overlaps Landscape's Green Forest — align target and ownership."}]
+  },
+  EMP:{
+    role:"Sector plan. Primary owner of climate & environment (Pillar 5) and environmental data governance. Seven themes with action + KPI tables.",
+    owns:["5","4","8"],
+    missing:[
+      {sev:"low", text:"Utility provisioning (4.1) is mapped and monitored but not provisioned here — confirm which programme owns provisioning."}],
+    add:[
+      {sev:"low", what:"A note that EMP owns environmental data & monitoring, not utility provisioning.", where:"Theme 5 · utilities"}],
+    realign:[
+      {with:["SMP","HTMP"], text:"Recast the 'Central Environmental GIS Repository' (E1) as the environmental module of the single shared platform."},
+      {with:["LDS"], text:"Tree / canopy: adopt Landscape's canonical 25,000-tree & canopy target; EMP owns the inventory & monitoring data."},
+      {with:["LDS"], text:"Blue-green corridors & biodiversity: EMP owns monitoring & targets, Landscape owns corridor design & planting — state the split in E3."},
+      {with:["HTMP","LDS"], text:"Walkability: EMP provides indicators & data; defer network design to Transport and public-realm design to Landscape (E6)."}]
+  },
+  LDS:{
+    role:"Sector plan. Landscape & public-realm delivery. A merge of Garden Island (2024) + the LDS Landscape draft. Contributes to Pillars 2, 5, 6, 7.",
+    owns:["2","5","6","7"],
+    missing:[
+      {sev:"high", text:"Tree-planting target conflicts across the two documents being merged (25,000 by 2025 vs 25,000 by 2040) — must be reconciled."},
+      {sev:"med", text:"Garden Island action IDs (1.x–5.x) differ from the LDS theme/focus IDs — reconcile numbering in the merged document."}],
+    add:[
+      {sev:"high", what:"Set the canonical tree & canopy target + date for the merged document.", where:"Green Forest theme"},
+      {sev:"med", what:"Adopt or author the citywide Universal Design Standard that the other plans will reference.", where:"Enhancing Pedestrian Experience · Focus 1.2"},
+      {sev:"med", what:"A crosswalk reconciling Garden Island action IDs with LDS theme/focus IDs.", where:"Merged-document front matter"}],
+    realign:[
+      {with:["SMP"], text:"SME / market spaces: Landscape delivers the physical space; Social delivers the enterprise programmes. Share one target."},
+      {with:["HTMP","EMP","SMP"], text:"Own the public-realm / shade design of walkability; cross-reference Transport (network), Environment (data), Social (safety)."},
+      {with:["EMP"], text:"Biodiversity / green corridors: Landscape owns design & planting; Environment owns monitoring & targets."}]
+  }
+};
+
 /* Convenience: flat SPD list + pillar lookup, built once. */
 const SPD_INDEX = (() => {
   const list=[]; const pillarById={};
@@ -426,4 +522,4 @@ const SPD_INDEX = (() => {
   return {list, pillarById};
 })();
 
-if (typeof module!=="undefined") module.exports={FRAMEWORK,PLANS,GAPS,OVERLAPS,INTEGRITY,SPD_INDEX};
+if (typeof module!=="undefined") module.exports={FRAMEWORK,PLANS,GAPS,OVERLAPS,INTEGRITY,DOC_ALIGN,SPD_INDEX};
