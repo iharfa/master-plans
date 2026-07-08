@@ -9,6 +9,7 @@ const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
 const el = (t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
 const planById = id => PLANS.find(p=>p.id===id);
 const sevOrder = {high:0,med:1,low:2};
+const trunc = (s,n)=> s.length>n ? s.slice(0,n-1).trim()+'…' : s;
 
 /* engine state (upload/version workflow only) */
 let CURRENT_TEXTS = baselineDocs();
@@ -223,6 +224,12 @@ function mmNodeWidth(d){
   const caret=(d.children||d._children)?16:0;
   return Math.max(90, base+badges+caret);
 }
+/* effective footprint including the ⚠ warn badge that hangs off red nodes */
+function mmEffWidth(d){
+  let w=mmNodeWidth(d);
+  if(d.data.status==='red'){ const wt=d.data.warn||'⚠ ALIGN'; w+=wt.length*6.2+14+8; }
+  return w;
+}
 /* my plan ids -> mind-map plan codes */
 const ID2MM={UDMP:'U',SMP:'S',HTMP:'T',EMP:'E',LDS:'L'};
 /* Build the overarching Urban Development Framework branch from FRAMEWORK + CURATED + GAPS,
@@ -235,7 +242,7 @@ function frameworkBranch(){
     const objs=p.objectives.map(o=>{
       const isGap=CURATED.objCov[o.id].gap, g=gapByObj[o.id];
       const contribs=CURATED.objCov[o.id].contributors.map(id=>planById(id)?.short).filter(Boolean);
-      return { name:`${o.id} · ${o.title}`, status:isGap?'red':'green', warn:isGap?'⚠ GAP':null,
+      return { name:`${o.id} · ${trunc(o.title,42)}`, status:isGap?'red':'green', warn:isGap?'⚠ GAP':null,
         slabel:isGap?'Coverage gap — no delivering action':'Objective — covered',
         wmsg:isGap?'⚠ COVERAGE GAP — no plan currently delivers this policy direction':null,
         detail:{ summary:o.title+'.',
@@ -245,11 +252,11 @@ function frameworkBranch(){
     });
     const hasGap=p.objectives.some(o=>CURATED.objCov[o.id].gap);
     const partial=pc.covered<pc.total;
-    return { name:`P${p.id} · ${p.title}`, status:hasGap?'red':(partial?'amber':'green'),
+    return { name:`P${p.id} · ${trunc(p.title,30)}`, status:hasGap?'red':(partial?'amber':'green'),
       warn:hasGap?'⚠ GAP':null, plans:contribMM,
       slabel:hasGap?'Policy pillar — contains coverage gaps':(partial?'Policy pillar — partial coverage':'Policy pillar — fully covered'),
       wmsg:hasGap?'⚠ CONTAINS COVERAGE GAPS — policy directions with no delivering action':null,
-      detail:{ summary:`${p.scope} — ${pc.covered}/${pc.total} objectives have a contributing plan action.`,
+      detail:{ summary:`${p.title}. ${p.scope} — ${pc.covered}/${pc.total} objectives have a contributing plan action.`,
         quotes:[],
         insight: hasGap ? `Contains coverage gaps at objective(s) ${p.objectives.filter(o=>CURATED.objCov[o.id].gap).map(o=>o.id).join(', ')}. Expand to see which policy directions have no delivering action and the recommended fix.`
                         : `Fully covered. Contributing plans: ${contribMM.map(c=>c).join(', ')}.` },
@@ -275,8 +282,12 @@ function buildTree(){
 }
 function mmUpdate(source){
   mmTreeLayout(mmRoot);
-  const colW=[0,210,255,255,265];
-  mmRoot.each(d=>{ let y=0; for(let i=0;i<d.depth;i++) y+=(colW[i+1]||255); d.y=y+20; });
+  // dynamic columns: each depth is placed clear of the widest node in the previous one
+  const maxW={}; let maxDepth=0;
+  mmRoot.each(d=>{ const w=mmEffWidth(d); if(w>(maxW[d.depth]||0)) maxW[d.depth]=w; if(d.depth>maxDepth)maxDepth=d.depth; });
+  const GAP=52, colX=[0];
+  for(let dd=1;dd<=maxDepth;dd++) colX[dd]=colX[dd-1]+(maxW[dd-1]||120)+GAP;
+  mmRoot.each(d=>{ d.y=colX[d.depth]+20; });
   const nodes=mmRoot.descendants(), links=mmRoot.links();
   const t=mmSvg.transition().duration(280);
   const node=mmGNodes.selectAll('g.node-chip').data(nodes,d=>d.id);
