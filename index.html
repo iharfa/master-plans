@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hulhumalé Master Plan Alignment</title>
+<meta name="description" content="Alignment analyzer for the Urban Development Framework and its master plans — gaps, overlaps, realignment flags, and upload-driven re-analysis.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand"><span class="dot"></span> Master Plan Alignment <small>Hulhumalé · HDC</small></div>
+  <div class="spacer"></div>
+  <button class="themebtn" id="themebtn">◐ Theme</button>
+</div></header>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Framework ↔ Master Plan Alignment</h1>
+    <p>Checks whether every <b>Strategic Policy Direction</b> in the Urban Development Framework is carried by an action somewhere in the master plans — and flags where plans overlap, conflict, or drift and which document needs to change. Upload updated plans to re-run the checks; results are version-tracked below.</p>
+    <div class="hier" id="hier"></div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <nav class="tabs">
+    <button class="active" data-tab="overview">Overview</button>
+    <button data-tab="matrix">Coverage Matrix</button>
+    <button data-tab="gaps">Gaps</button>
+    <button data-tab="overlaps">Overlaps &amp; Realignment</button>
+    <button data-tab="integrity">Document Integrity</button>
+    <button data-tab="explorer">Framework Explorer</button>
+    <button data-tab="upload">Upload &amp; Versions</button>
+  </nav>
+
+  <section class="tab active" id="tab-overview">
+    <h2>How the documents fit together</h2>
+    <p class="lead">The Urban Development Framework is the top-level policy layer: <b>8 Policy Pillars → 33 Strategic Objectives → 133 Strategic Policy Directions</b>. Those 8 pillars map one-to-one onto the 8 themes of the Urban Development Master Plan booklet. The four sector master plans (Social, Transport, Environment, Landscape/Garden Island) hold the <b>delivering actions</b>. Alignment means every policy direction has an action feeding it, no two plans quietly duplicate or contradict each other, and the wording stays consistent as documents are revised.</p>
+    <h2 style="margin-top:22px">Coverage by pillar</h2>
+    <p class="lead">Share of each pillar's strategic objectives that at least one plan currently contributes an action toward.</p>
+    <div class="bars" id="bars"></div>
+    <div class="note">This is a <b>structural / textual</b> alignment check, not an engineering or legal review. The keyword engine (see <em>Upload &amp; Versions</em>) is deliberately transparent and conservative — treat its output as a prompt for human review, and read the curated <em>Gaps</em> and <em>Overlaps</em> tabs for the substantive findings.</div>
+  </section>
+
+  <section class="tab" id="tab-matrix">
+    <h2>Coverage matrix — pillars × plans</h2>
+    <p class="lead">Which plan owns or contributes to each framework pillar. A pillar with only secondary contributions and no primary owner is a candidate for a gap.</p>
+    <div id="matrix"></div>
+  </section>
+
+  <section class="tab" id="tab-gaps">
+    <h2>Coverage gaps</h2>
+    <p class="lead">Strategic Policy Directions with little or no delivering action in any master plan. Each is flagged with the recommended fix and whether it should be resolved at the master-plan level.</p>
+    <div class="cards" id="gaps-cards"></div>
+    <div id="gaps-extra" style="margin-top:16px"></div>
+  </section>
+
+  <section class="tab" id="tab-overlaps">
+    <h2>Overlaps &amp; required realignment</h2>
+    <p class="lead">Where two or more plans address the same topic and the text needs to be coordinated. Each card names <b>which documents to change</b> and how to divide ownership.</p>
+    <div class="cards" id="overlaps-cards"></div>
+  </section>
+
+  <section class="tab" id="tab-integrity">
+    <h2>Document integrity issues</h2>
+    <p class="lead">Internal errors — numbering, typos, and missing links — found while parsing the source documents. These are quick corrections independent of the alignment findings.</p>
+    <div class="cards" id="integrity-cards"></div>
+  </section>
+
+  <section class="tab" id="tab-explorer">
+    <h2>Framework explorer</h2>
+    <p class="lead">The full framework, pillar by pillar, showing the contributing plans against every objective. Click a pillar to expand. Objectives with no contributing plan are flagged <span class="gapflag">GAP</span>.</p>
+    <div id="explorer"></div>
+  </section>
+
+  <section class="tab" id="tab-upload">
+    <h2>Upload updated plans &amp; track versions</h2>
+    <p class="lead">Drop in revised master-plan <code>.md</code> files. The tool re-runs the coverage logic, compares against the previous run, and saves a version so you can see whether an edit closed a gap or opened a new one. Everything runs in your browser — nothing is uploaded to a server.</p>
+    <div class="note"><b>How to read the engine.</b> It scans each plan for the distinctive <em>signal phrases</em> of the 8 tracked gaps. A match means the gap topic now <b>appears in the text</b> — which is a prompt to confirm it is a real delivering action, not just narrative wording. The authoritative, action-level judgement stays the curated 76% on the other tabs; the engine's job here is to show what <b>changed between revisions</b> and version-track it.</div>
+    <div class="upload-grid">
+      <div>
+        <div class="drop" id="drop">
+          <p style="font-size:16px;color:var(--ink);font-weight:600">Drop updated .md plans here</p>
+          <p>or click to choose files · filenames are matched to plans automatically</p>
+        </div>
+        <input type="file" id="fileinput" accept=".md,.markdown,.txt" multiple hidden>
+        <div class="filelist" id="filelist"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn" id="run">Run alignment analysis</button>
+          <button class="btn ghost" id="export">Export report (JSON)</button>
+          <button class="btn ghost" id="clearv">Clear versions</button>
+        </div>
+        <div id="run-result" style="margin-top:14px"></div>
+      </div>
+      <div>
+        <h3 style="font-size:15px;margin-bottom:8px">Version history</h3>
+        <div id="versions"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Structural alignment tool for the Hulhumalé Urban Development Framework and master plans.
+    Baseline built from the Framework Excel and the Social, Transport, Environment and Landscape/Garden Island drafts.
+    Findings are decision-support prompts for HDC Planning review, not a substitute for it.
+  </footer>
+</div>
+
+<script src="data.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
