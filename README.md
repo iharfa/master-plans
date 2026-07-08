@@ -22,6 +22,12 @@ Garden Island and the Landscape Development Masterplan are being merged into one
 
 ## What it does
 
+- **Document network** — an SVG graph of how the documents link: solid lines down the
+  hierarchy (Framework → UDMP → sector plans), curved lines between sector plans that share
+  a topic (thicker = more shared topics, coloured by severity). Hover a node to isolate its
+  links and list them.
+- **By document** — a per-document worklist: what's missing from each document, concrete
+  additions with the exact section to edit, and the realignments it shares with its siblings.
 - **Coverage matrix** — which plan owns or contributes to each framework pillar.
 - **Gaps** — Strategic Policy Directions with no delivering action in any master plan, with the
   recommended fix and whether it needs resolving at the master-plan level.
@@ -38,11 +44,11 @@ Garden Island and the Landscape Development Masterplan are being merged into one
 
 | file | role |
 |------|------|
-| `index.html` | page shell + tabs |
-| `data.js` | the framework, the plan crosswalk, and the curated gap/overlap/integrity findings |
+| `index.html` | side-rail workbench shell + the nine views |
+| `data.js` | the framework, the plan crosswalk, the curated gap/overlap/integrity findings, and the per-document `DOC_ALIGN` worklist |
 | `engine.js` | the reusable coverage engine + version tracking (runs on baseline *and* uploads) |
-| `app.js` | rendering / interaction |
-| `styles.css` | styling (light + dark) |
+| `app.js` | rendering / interaction, incl. the SVG network diagram |
+| `styles.css` | Hallmark Workbench design system — Cobalt theme, Space Grotesk + Inter + JetBrains Mono, OKLCH tokens, light + dark |
 
 ## Updating the baseline
 
