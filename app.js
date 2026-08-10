@@ -113,6 +113,30 @@ function renderBars(){
 }
 
 /* ---------- matrix ---------- */
+/* Colour-coded action list for one pillar: every action delivering it, grouped
+   by source plan, with the document's own action numbering. Uses the full
+   ACTIONS inventory when the active version has one; otherwise falls back to
+   the representative theme actions embedded in PLANS. */
+function pillarActionsHTML(p){
+  const full = (typeof ACTIONS!=="undefined") && ACTIONS;
+  let groups, capt;
+  if(full){
+    groups=PLANS.map(pl=>({pl, items:(ACTIONS[pl.id]||[]).filter(a=>a.p===p.id)})).filter(g=>g.items.length);
+    const total=groups.reduce((n,g)=>n+g.items.length,0);
+    capt=`<b>${total} actions</b> in ${groups.length} document${groups.length===1?'':'s'} deliver Pillar ${p.id} — colour = source document, <code>code</code> = that document's own action number.`;
+  }else{
+    groups=PLANS.map(pl=>({pl, items:pl.themes
+      .filter(th=>(th.pillars.primary||[]).includes(p.id)||(th.pillars.secondary||[]).concat(th.pillars.touch||[]).includes(p.id))
+      .flatMap(th=>(th.actions||[]).map(t=>({id:null,t})))})).filter(g=>g.items.length);
+    capt=`Representative theme actions per plan (the ${DATA_VERSIONS[DATA_VER].label} dataset carries highlights, not the full inventory — switch to V1.2 for the complete list).`;
+  }
+  if(!groups.length) return `<div class="mini" style="padding:var(--s3) 0">No plan action currently delivers this pillar — see the Gaps tab.</div>`;
+  return `<div class="xcap">${capt}</div><div class="xgroups">`+groups.map(g=>`
+    <div class="agrp" style="--dc:${g.pl.colour}">
+      <div class="agh"><span class="dotp"></span><b>${g.pl.short}</b><span class="mini">${g.pl.name} · ${g.items.length} action${g.items.length===1?'':'s'}</span></div>
+      <ul class="alist">${g.items.map(a=>`<li>${a.id?`<code>${a.id}</code>`:''}<span>${a.t}</span></li>`).join('')}</ul>
+    </div>`).join('')+`</div>`;
+}
 function renderMatrix(){
   const plans=PLANS;
   const head=`<tr><th class="pillar">Policy Pillar</th>${plans.map(p=>`<th>${p.short}</th>`).join('')}<th>Cover</th></tr>`;
@@ -126,14 +150,21 @@ function renderMatrix(){
       return `<td class="cell"><span class="cov ${cls}" title="${pl.name}">${txt}</span></td>`;
     }).join('');
     const pct=Math.round(100*pc.covered/pc.total);
-    rows+=`<tr><th class="pillar"><span class="pn">${p.id}</span>${p.title}<div class="mini">${pc.covered}/${pc.total} objectives covered</div></th>${cells}<td class="cell"><span class="cpct">${pct}%</span></td></tr>`;
+    rows+=`<tr class="prow" data-p="${p.id}"><th class="pillar"><span class="xchev">▸</span><span class="pn">${p.id}</span>${p.title}<div class="mini">${pc.covered}/${pc.total} objectives covered · click for actions</div></th>${cells}<td class="cell"><span class="cpct">${pct}%</span></td></tr>
+      <tr class="xrow" id="xp-${p.id}" hidden><td colspan="${plans.length+2}">${pillarActionsHTML(p)}</td></tr>`;
   }
   $('#matrix').innerHTML=`<div class="matrix-wrap"><table class="matrix"><thead>${head}</thead><tbody>${rows}</tbody></table></div>
     <div class="legend">
       <span><span class="sw cov p">●</span> Primary owner — a theme dedicated to this pillar</span>
       <span><span class="sw cov s">◐</span> Secondary contribution</span>
       <span><span class="sw cov none">·</span> No contribution</span>
+      <span><span class="sw">▸</span> Click a pillar row to list its delivering actions, colour-coded by document</span>
     </div>`;
+  $$('#matrix tr.prow').forEach(r=>r.onclick=()=>{
+    const x=$('#xp-'+r.dataset.p);
+    x.hidden=!x.hidden;
+    r.classList.toggle('open',!x.hidden);
+  });
 }
 
 /* ---------- gaps ---------- */

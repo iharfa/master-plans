@@ -46,7 +46,10 @@ persists in `localStorage`.
   generated live from `FRAMEWORK` + `GAPS`.
 - **By document** — a per-document worklist: what's missing from each document, concrete
   additions with the exact section to edit, and the realignments it shares with its siblings.
-- **Coverage matrix** — which plan owns or contributes to each framework pillar.
+- **Coverage matrix** — which plan owns or contributes to each framework pillar. Click a
+  pillar row to expand the full list of delivering actions, colour-coded by source document
+  and carrying each document's own action numbers (V1.2's `ACTIONS_V12` inventory, 267
+  actions; V1.0 falls back to representative theme actions).
 - **Gaps** — Strategic Policy Directions with no delivering action in any master plan, with the
   recommended fix and whether it needs resolving at the master-plan level.
 - **Overlaps & realignment** — where plans duplicate or contradict each other, naming *which

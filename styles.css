@@ -398,3 +398,21 @@ footer.foot{margin-top:var(--s8);padding-top:var(--s5);border-top:1px solid var(
 .verswitch .vdate{font-family:var(--font-mono);font-size:10.5px;color:var(--muted);letter-spacing:.03em;white-space:nowrap}
 body:has(#net-stage.fs) .verswitch{display:none}
 @media(max-width:900px){.verswitch{top:8px;right:8px}.verswitch .vdate{display:none}}
+
+/* ---- matrix: expandable per-pillar action lists ---- */
+#matrix tr.prow{cursor:pointer}
+#matrix tr.prow .xchev{display:inline-block;font-size:11px;color:var(--muted);margin-right:6px;transition:transform .18s ease}
+#matrix tr.prow.open .xchev{transform:rotate(90deg);color:var(--accent)}
+#matrix tr.xrow>td{background:var(--panel-2);padding:var(--s4) var(--s5)}
+#matrix tr.xrow .xcap{font-size:12.5px;color:var(--ink-2);margin-bottom:var(--s4)}
+#matrix tr.xrow .xcap code{font-family:var(--font-mono);font-size:11px;color:var(--accent-ink)}
+.xgroups{display:grid;gap:var(--s4)}
+.agrp{border-left:3px solid var(--dc);background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--dc);border-radius:var(--r1);padding:var(--s3) var(--s4)}
+.agrp .agh{display:flex;align-items:center;gap:8px;margin-bottom:var(--s2);flex-wrap:wrap}
+.agrp .agh b{font-family:var(--font-display);font-size:13px;color:var(--dc)}
+.agrp .agh .dotp{width:9px;height:9px;border-radius:50%;background:var(--dc);flex:none}
+.agrp .alist{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.agrp .alist li{display:flex;gap:9px;align-items:baseline;font-size:13px;line-height:1.45;color:var(--ink)}
+.agrp .alist li code{font-family:var(--font-mono);font-size:10.5px;font-weight:600;color:var(--dc);
+  background:color-mix(in srgb,var(--dc) 12%,transparent);border-radius:5px;padding:1px 6px;white-space:nowrap;flex:none}
+@media(min-width:1100px){.xgroups{grid-template-columns:1fr 1fr}}
