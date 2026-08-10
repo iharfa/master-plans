@@ -20,6 +20,19 @@ Urban Development Master Plan  ← the booklet / structural spine
 
 Garden Island and the Landscape Development Masterplan are being merged into one document.
 
+## Analysis versions
+
+The curated findings are **versioned**. A toggle pinned to the top-right corner switches the
+whole workbench between:
+
+- **V1.0** (8 Jul 2026) — baseline analysis of the July 2026 drafts.
+- **V1.2** (10 Aug 2026) — re-analysis of the August 2026 updated drafts (revised UDMP,
+  Social, Transport and Landscape; the Framework re-issued as a Word draft; Environment
+  unchanged).
+
+Both datasets live in `data.js` (`*_V10` / `*_V12` + the `DATA_VERSIONS` registry); the choice
+persists in `localStorage`.
+
 ## What it does
 
 - **Document mind map** — a D3 horizontal collapsible tree (`d3.min.js` vendored locally).

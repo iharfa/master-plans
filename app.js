@@ -17,7 +17,7 @@ let CURRENT = analyze(CURRENT_TEXTS);
 const uploaded = {};
 
 /* ---------- CURATED crosswalk (authoritative) ---------- */
-const CURATED = (() => {
+function computeCurated(){
   const gapObj = new Set(GAPS.map(g=>g.spd.split('.').slice(0,2).join('.')));
   const pillar = {};
   for(const p of FRAMEWORK) pillar[p.id]={primary:new Set(),secondary:new Set()};
@@ -38,7 +38,28 @@ const CURATED = (() => {
     pillarCov[p.id]={covered:pc,total:p.objectives.length,primary:[...pillar[p.id].primary],secondary:[...pillar[p.id].secondary]};
   }
   return {gapObj, pillar, objCov, pillarCov, total, covered, score:Math.round(100*covered/total)};
-})();
+}
+let CURATED = computeCurated();
+
+/* ---------- curated-data version switch (V1.0 / V1.2) ---------- */
+function renderVerSwitch(){
+  const w=$('#verswitch'); if(!w) return;
+  const d=DATA_VERSIONS[DATA_VER];
+  w.innerHTML=Object.keys(DATA_VERSIONS).map(v=>
+    `<button class="vbtn${v===DATA_VER?' active':''}" data-ver="${v}" title="${DATA_VERSIONS[v].desc}">${DATA_VERSIONS[v].label}</button>`).join('')
+    +`<span class="vdate">updated ${d.date}</span>`;
+  $$('.vbtn',w).forEach(b=>b.onclick=()=>switchDataVersion(b.dataset.ver));
+}
+function switchDataVersion(v){
+  if(v===DATA_VER || !DATA_VERSIONS[v]) return;
+  applyDataVersion(v); localStorage.setItem('mp_data_ver',v);
+  CURATED=computeCurated();
+  CURRENT_TEXTS=baselineDocs(); CURRENT=analyze(CURRENT_TEXTS);
+  renderKpis();renderHiermap();renderBars();renderMatrix();
+  renderGaps();renderOverlaps();renderIntegrity();renderExplorer();renderBydoc();
+  mmBuilt=false; mmSel=null; renderNetwork();
+  renderVerSwitch();
+}
 
 /* ---------- theme ---------- */
 function initTheme(){
@@ -125,7 +146,7 @@ function renderGaps(){
       <h3>${g.title}</h3><p>${g.detail}</p>
       <div class="fix"><b>Recommended fix →</b> ${g.change}</div></div>`;
   }).join('');
-  $('#gaps-extra').innerHTML=`<div class="note">The 8 flags above are the curated coverage gaps. Uploading a revised plan on <b>Upload &amp; Versions</b> re-checks each and reports which a revision has closed or newly opened.</div>`;
+  $('#gaps-extra').innerHTML=`<div class="note">The ${GAPS.length} flags above are the curated coverage gaps for ${DATA_VERSIONS[DATA_VER].label}. Uploading a revised plan on <b>Upload &amp; Versions</b> re-checks each and reports which a revision has closed or newly opened.</div>`;
 }
 
 /* ---------- overlaps ---------- */
@@ -452,7 +473,7 @@ function exportJSON(){
 
 /* ---------- boot ---------- */
 function boot(){
-  initTheme();initNav();
+  initTheme();initNav();renderVerSwitch();
   renderKpis();renderHiermap();renderBars();renderMatrix();
   renderGaps();renderOverlaps();renderIntegrity();renderExplorer();
   renderBydoc();renderNetwork();renderFileList();renderVersions();
