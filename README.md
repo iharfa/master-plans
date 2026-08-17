@@ -61,6 +61,9 @@ persists in `localStorage`.
   the same concept (data platform, pedestrian network, heat/cooling, "resilience", spelling
   conventions…), scored aligned / drift / conflict, with the recommended standard wording
   (`LANG_V12` in data.js).
+- **Data Conflicts (05.b)** — cross-check of the figures the documents cite (populations,
+  areas, elevations, targets, dates, counts), scored consistent / clarify / mismatch, with
+  the recommended resolution (`DATAC_V12` in data.js).
 - **Document integrity** — numbering errors, typos and missing cross-links in the sources.
 - **Framework explorer** — browse all 8 pillars → objectives → policy directions with the
   contributing plans shown against each.

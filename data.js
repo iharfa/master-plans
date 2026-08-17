@@ -1786,6 +1786,150 @@ const LANG_V12 = [
    fix:"Keep the term; write the (already-proposed) Green Verge Management Standard as the joint instrument and have all five documents cite it by that exact name." }
 ];
 
+/* ---- V1.2 CITED-DATA CROSS-CHECK --------------------------------------------
+   Figures, targets and dates cited across the five documents, cross-checked for
+   mismatches. status: green = consistent, amber = clarify (single-sourced,
+   ambiguous or superseded), red = mismatch (documents cite different values for
+   the same fact, or a document contradicts itself). Same shape as LANG_V12;
+   feeds the 05.b Data Conflicts view. */
+const DATAC_V12 = [
+ { id:"popnow", domain:"Current population of Hulhumalé", status:"red",
+   terms:{
+     UDMP:{t:"156,416 existing", r:"2.4.1 Urban Profile", all:["'Existing Population: 156,416' — no source, no date"]},
+     SMP:{t:"130,900 projected (also 130,917)", r:"Summary · Ch.4", all:["'current projected residential population' 130,900 (Summary)","Ch.4 GIS table: 75,386 (P1) + 55,531 (P2) = 130,917 — differs from its own 130,900","Census 2022 actual: 65,714 (35,859 P1 / 29,855 P2)"]},
+     HTMP:{t:"—", r:"", all:["No population figure; demand 'projected to increase substantially' — placeholder bullets only"]},
+     EMP:{t:"65,714 (Census 2022)", r:"§2.3 Table 1", all:["Census 2022: 65,714 total — 53,129 Maldivian + 12,585 foreign","Phase 1: 35,859 · Phase 2: 29,855"]},
+     LDS:{t:"—", r:"", all:["'Rapid population growth' — qualitative only"]}},
+   verdict:"Three different answers to 'how many people live in Hulhumalé': the Census counted 65,714 (2022), Social projects 130,900 (and 130,917 in its own table), and the UDMP states 156,416 with no source or date. Transport sizes a transit system without citing any of them.",
+   fix:"Publish one HDC population baseline (Census 2022 actual + a dated HDC estimate + the projection), with source and date attached, and have all five documents cite that one table." },
+ { id:"popmax", domain:"Ultimate / planned capacity", status:"red",
+   terms:{
+     UDMP:{t:"520,650 max · 364,234 planned", r:"2.4.1", all:["'Maximum Population: 520,650' · 'Planned Population: 364,234'","156,416 + 364,234 = 520,650 exactly — so 'planned' is an increment, though presented as a total"]},
+     SMP:{t:"349,850 carrying capacity", r:"Summary · Ch.4", all:["'planned carrying capacity across Phases 1 and 2': 349,850"]},
+     HTMP:{t:"'planned capacity' (no figure)", r:"Ch.5", all:["Plans for 'planned capacity' without citing a number"]},
+     EMP:{t:"349,856 implied (97,687 + 252,169)", r:"§2.3", all:["HDC GIS Mapbook 'full-capacity population estimates': Phase 1 97,687 · Phase 2 252,169","Sum (349,856) never stated; differs from SMP's 349,850 by 6"]},
+     LDS:{t:"—", r:"", all:[]}},
+   verdict:"Two capacity universes: Social and Environment both trace to the HDC GIS Mapbook (~349,850) while the revised UDMP now says maximum 520,650 — 49% higher — with an ambiguous 'planned 364,234' that is actually the increment above existing. No document acknowledges the other figure.",
+   fix:"State in the UDMP whether 520,650 supersedes the Mapbook's ~349,850 (post-Phase-3-merger capacity?) and update the Mapbook + sector plans to the governing figure; label increments as increments." },
+ { id:"openspace", domain:"Open space per person", status:"red",
+   terms:{
+     UDMP:{t:"1.31 m² AND ~2.5 m²", r:"2.4.1 vs 2.1 & 9.2.6", all:["'Open Space Ratio: 1.31 SQ' (2.4.1 — garbled unit)","'approximately 2.5 m² of public open green space per person' as the ORIGINAL standard (2.1)","'open space index of approximately 2.5 square meters per person' as ACHIEVED (9.2.6)","Arithmetic: 680,700 sqm open green ÷ 520,650 max = 1.31; (open green + sports) ÷ 364,234 planned ≈ 2.5 — different numerators AND denominators, never explained"]},
+     SMP:{t:"— (placeholders)", r:"Ch.4", all:["'(XXX: Add park mapping…)' — no figure despite public-space theme"]},
+     HTMP:{t:"—", r:"", all:[]},
+     EMP:{t:"— (procedural only)", r:"Theme 3", all:["Annual green space condition audits; no m²/person standard"]},
+     LDS:{t:"Open Space Index (no value)", r:"Ch.5", all:["Cites the 'Open Space Index' as a strategic benchmark — value never given"]}},
+   verdict:"The city's headline liveability metric is broken: the UDMP gives both 1.31 and ~2.5 m²/person without reconciling them (they use different numerators and denominators), Landscape cites an 'Open Space Index' with no value, and no other plan carries a number at all.",
+   fix:"Define the Open Space Index once (what counts as open space, per which population), publish the current value and target, and correct UDMP 2.4.1 / 9.2.6 to use it consistently." },
+ { id:"elevation", domain:"Island elevation above sea level", status:"red",
+   terms:{
+     UDMP:{t:"1.5–2.0 m average", r:"2.3", all:["'average elevation of approximately 1.5 to 2.0 meters above mean sea level'"]},
+     SMP:{t:"—", r:"", all:[]},
+     HTMP:{t:"'purpose-elevated' (no value)", r:"Theme 4", all:["Maldives-wide: 'vast majority of its land area less than one metre above mean sea level'","Hulhumalé 'purpose-elevated' — no figure"]},
+     EMP:{t:"1.8 m (P1) · 2.0 m (P2/P3) · 1.8–2.3 m beach", r:"Exec Summary · §2.5", all:["'~1.8 m above Mean Sea Level' Phase 1 average","'~2.0 m above MSL' Phase 2 and ongoing Phase 3","'1.8–2.3 m above MSL' eastern beach profile"]},
+     LDS:{t:"—", r:"", all:[]}},
+   verdict:"The island's defining climate-resilience statistic differs between the two documents that state it: UDMP says the average is 1.5–2.0 m; Environment says Phase 1 averages 1.8 m and Phase 2/3 about 2.0 m with beach profiles up to 2.3 m. A 1.5 m floor vs a 1.8 m floor is a material difference for flood-risk claims.",
+   fix:"Adopt EMP's phase-specific elevations (it holds the survey data) as the citable figures and correct UDMP 2.3; retire the unsourced 1.5 m lower bound or attribute it." },
+ { id:"phases", domain:"Phases & reclaimed area", status:"red",
+   terms:{
+     UDMP:{t:"2 phases (P3 merged) · 4,431,268.66 sqm", r:"2.1 · 2.4.1", all:["Total reclaimed 4,431,268.66 sqm — P1 1,917,746.09 + P2 2,513,522.57 (sums exactly)","'Phase 3 was integrated with Phase 2' (2025 revision)","But its own history says Phase 1 = 'approximately 188 hectares' (2.1) vs 191.8 ha in 2.4.1"]},
+     SMP:{t:"2 phases", r:"throughout", all:["P1/P2 only; area figures absent ('Area, SQM, p1, p2' placeholder)"]},
+     HTMP:{t:"Phase 2 frontier (no areas)", r:"throughout", all:["No area figures; Phase 3 never mentioned"]},
+     EMP:{t:"3 phases (P3 ongoing)", r:"§2.2", all:["'Phase 3: Ongoing expansion…' with its own elevation figures","Pre-merger geometry throughout"]},
+     LDS:{t:"6 neighbourhoods (no phases)", r:"Ch.5", all:["'extends across six neighborhoods' — the only neighbourhood count in the whole set"]}},
+   verdict:"The documents disagree on the shape of the city itself: UDMP describes a two-phase merged landmass of 4.43M sqm (while contradicting itself on Phase 1's size, 188 vs 191.8 ha), Environment still plans three phases with Phase 3 ongoing, and Landscape counts six neighbourhoods that no other document confirms.",
+   fix:"One geography note in every plan: phase structure post-2025 revision, phase areas from the UDMP table, and an agreed neighbourhood count/naming." },
+ { id:"treenum", domain:"Tree & canopy targets", status:"red",
+   terms:{
+     UDMP:{t:"KPI without a number", r:"11.4", all:["KPI 'Number of trees planted or hectares of landscaped areas completed' — no target value"]},
+     SMP:{t:"green-cover plan (no number)", r:"5.4.2.2.1", all:["City-level green cover plan — no numeric target"]},
+     HTMP:{t:"targets 'to be established'", r:"Theme 4 F02", all:["Street Tree Network Plan will set 'corridor-by-corridor canopy coverage targets' — values unstated","Generic benchmarks only: canopy cools surfaces 10–15°C (unnamed studies)"]},
+     EMP:{t:"relative KPIs only", r:"Theme 3", all:["Tree survival >85% annually · net canopy increase YoY","Blue-green corridor gaps −50% by 2030 · ≥5 cooling corridors by year 5"]},
+     LDS:{t:"zero numbers (deleted)", r:"8.3.1.1.2", all:["'Establish long-term urban tree canopy targets' — a target to set targets","Old draft's '25,000 trees by 2040' and '30% canopy' deleted; Garden Island 2024's '25,000 by 2025' dropped"]}},
+   verdict:"After the V1.0 target conflict (25,000 trees by 2025 vs 2040) was resolved by deletion, the entire system now contains no absolute greening number: three plans promise to set canopy targets, and only EMP carries any figures — all relative (survival %, year-on-year trend).",
+   fix:"Set the citywide canopy % and tree-count target once (in LDS 8.3.1.1, measured by EMP's inventory), and have HTMP's corridor targets and UDMP's KPI quote the same figures." },
+ { id:"walktime", domain:"Walking-access standard", status:"amber",
+   terms:{
+     UDMP:{t:"5 min / 5–10 min / 10 min", r:"2.4.2 · 8.5.2 · 11.4", all:["Mosques: 'strict 5-minute walking radius' (2.4.2)","'5–10 Minute Neighborhoods' (8.5.2)","KPI measures a '10-minute walk' (11.4) — three standards in one document"]},
+     SMP:{t:"access-radius standards (unquantified)", r:"5.3.2.1.1", all:["Healthcare 'access-radius standards' — values not stated"]},
+     HTMP:{t:"—", r:"", all:["Pedestrian catchments discussed qualitatively"]},
+     EMP:{t:"100% schools assessed", r:"Theme 6", all:["'100% of schools and major public facilities assessed for walking access' — assessment, not a standard"]},
+     LDS:{t:"deleted (was 300 m / 400 m)", r:"old draft", all:["Old KPIs '90% of residents within 300m of a safe pedestrian route' and 'every resident within 400m of a neighborhood park' — deleted in the new draft"]}},
+   verdict:"Walkability is everyone's goal but nobody's number: the UDMP alone uses three different walk-time standards (5, 5–10, 10 minutes), Landscape deleted its 300/400-metre standards, and the others defer to assessments.",
+   fix:"One access standard table (minutes AND metres, per facility type) in the UDMP, cited by all plans and by EMP's walkability indicator framework." },
+ { id:"landuse", domain:"Land-use shares & the missing roads", status:"amber",
+   terms:{
+     UDMP:{t:"16 uses = 70.69% (no roads class)", r:"6.1–6.16", all:["16 categories sum to 70.69% of the 4.43M sqm (areas: 3,132,201.53 sqm)","~29.3% (≈1.3M sqm — roads, beaches) has no category","Residential 22.13% · Open Green Space 15.36% · Sports & Rec 5.14%"]},
+     SMP:{t:"—", r:"", all:[]},
+     HTMP:{t:"'high percentage' for roads (no figure)", r:"Ch.4", all:["'high percentage of land dedicated to roads compared to other cities' — figure is a placeholder: '(Figure percentage of different land uses in Hulhumale)'"]},
+     EMP:{t:"—", r:"", all:[]},
+     LDS:{t:"—", r:"", all:[]}},
+   verdict:"Transport's headline claim (an unusually high share of land is roads) is exactly the ~29% that the UDMP's land-use table leaves uncategorised — the two documents describe the same fact, one without a number and one without a category.",
+   fix:"Add a roads/circulation category to UDMP 6.x so the table sums to 100%, and let HTMP cite that percentage." },
+ { id:"horizons", domain:"Planning horizons & dated targets", status:"amber",
+   terms:{
+     UDMP:{t:"no horizon · zero forward dates", r:"11.x", all:["All dates historical (1997→2025); KPI table has no numeric or dated targets"]},
+     SMP:{t:"10 years · relative bands", r:"Ch.7", all:["Short 0–2 / Medium 3–5 / Long 6–10 years — no calendar-year targets at all"]},
+     HTMP:{t:"zero year-figures", r:"whole doc", all:["No four-digit year anywhere (grep-verified); Vision Zero 'time-bound objective' flagged as not yet defined"]},
+     EMP:{t:"2026–2040 · ~25 dated commitments", r:"Doc control · Themes", all:["Reviews 2030 / 2035 / 2040","Within-6/12/18/24-month commitments; year-5 targets; −50% corridor gaps by 2030"]},
+     LDS:{t:"zero dated targets", r:"whole doc", all:["Only the version date (29/03/2026); matrices externalised"]}},
+   verdict:"Only Environment can be held to a calendar: it carries ~25 dated commitments on a 2026–2040 horizon, Social uses relative bands on an unanchored 10-year clock, and the UDMP, Transport and Landscape contain no forward dates whatsoever.",
+   fix:"Anchor every plan to the same horizon (2026–2040 with 2030/2035/2040 reviews, matching EMP and the Framework's 5-year cycle) and convert SMP's relative bands to calendar ranges." },
+ { id:"safety", domain:"Road-safety data", status:"amber",
+   terms:{
+     UDMP:{t:"—", r:"", all:["Road safety qualitative (8.5.4)"]},
+     SMP:{t:"2,264 accidents · 5 fatal", r:"Ch.4 (Police)", all:["Maldives Police Service, early 2024 – mid 2025: 2,264 traffic accidents, 5 fatal","Peak outbound bridge window 7:30–8:15 AM"]},
+     HTMP:{t:"baseline is a placeholder", r:"Ch.3–4", all:["'Transport safety (accidents, blackspots)' — placeholder bullet","Only generic benchmarks: 50 km/h impact ≈ 80% fatality risk; 30 km/h < 10%"]},
+     EMP:{t:"—", r:"", all:[]},
+     LDS:{t:"—", r:"", all:["Old '50% reduction in pedestrian accidents' KPI deleted"]}},
+   verdict:"The transport plan has no local accident data — while the social plan, sitting next to it, cites the police dataset (2,264 accidents, 5 fatalities, with locations). The number the old Landscape KPI needed also lives in that dataset.",
+   fix:"Move the police road-safety dataset into HTMP's baseline chapter (and the shared GIS), and set the Vision Zero time-bound target from it." },
+ { id:"heatnum", domain:"Heat & energy figures", status:"amber",
+   terms:{
+     UDMP:{t:"—", r:"", all:[]},
+     SMP:{t:"—", r:"", all:["Urban heat described qualitatively"]},
+     HTMP:{t:"generic international benchmarks", r:"Theme 4", all:["Canopy cools 10–15°C; vegetated precincts 2–5°C lower; surfaces +30–40°C over ambient — attributed to unnamed 'studies'","LED lighting saves 50–70%, smart controls a further 20–40%","Asphalt albedo 5–10% (absorbs 90–95%)"]},
+     EMP:{t:"local heat map (future)", r:"Theme 3", all:["'Annual urban heat map published before peak heat season' — no local baseline exists yet"]},
+     LDS:{t:"—", r:"", all:["Thermal comfort qualitative"]}},
+   verdict:"Every thermal number in the set is a generic international benchmark from unnamed studies (all in Transport); no document cites a measured Hulhumalé temperature, and the local heat map that would ground them is still a future EMP deliverable.",
+   fix:"Name the sources for HTMP's benchmark figures, and re-anchor all heat claims to EMP's annual urban heat map once published." },
+ { id:"parking", domain:"Parking standards", status:"amber",
+   terms:{
+     UDMP:{t:"visitor 10% · disability 5%", r:"5.4", all:["'Visitor parking – 10% allocation; Persons with disability parking – 5% allocation'"]},
+     SMP:{t:"—", r:"", all:[]},
+     HTMP:{t:"'to be calibrated'", r:"Theme 2 F06", all:["Phase 2 parking standards 'to be calibrated' — no ratios stated despite parking being a core theme"]},
+     EMP:{t:"parking conflict mapping", r:"Theme 6", all:["Maps parking/road-space conflict — no standards"]},
+     LDS:{t:"—", r:"", all:["Old streetscape parking-management focus area removed"]}},
+   verdict:"The only numeric parking standards in the system sit in the UDMP (10% visitor / 5% disability) — the transport plan, which owns parking policy, states none and doesn't cite them.",
+   fix:"HTMP's parking management strategy adopts and extends the UDMP 5.4 standards (adding residential/commercial ratios), single table, cross-cited." },
+ { id:"smpself", domain:"Social plan's self-statistics", status:"amber",
+   terms:{
+     UDMP:{t:"—", r:"", all:[]},
+     SMP:{t:"22 objectives / 58 actions / 146 sub-actions", r:"Ch.5", all:["Stated totals: 22 / 58 / 146 — but the per-theme table has only 4 theme rows while the plan has 5 pillars; actual objective count in the new structure is 24","'current projected population' 130,900 (Summary) vs 130,917 (its own Ch.4 table)","PWD caption says intellectual disabilities rank high; its own chart ranks psychological (143) far above intellectual (88); type counts sum to 948","Duplicated conclusions: one says 'four key themes', the other 'five'"]},
+     HTMP:{t:"'six focus areas' (has eight)", r:"Theme 1 intro", all:["Theme 1 intro claims 'six interdependent focus areas' but lists eight (Focus 01–08)"]},
+     EMP:{t:"consistent", r:"", all:["No numeric self-contradictions found"]},
+     LDS:{t:"numbering defects", r:"Ch.7 · 9.4", all:["Repeated sub-action IDs (7.3.1.1.1 ×5 etc.); §9.4 missing"]}},
+   verdict:"Self-descriptive numbers drift inside documents: Social's stated totals no longer match its own restructured contents (and its summary population differs from its table by 17), Transport's Theme 1 miscounts its focus areas, Landscape's numbering repeats.",
+   fix:"Recount and restate each plan's self-statistics after every restructure — a pre-publication checklist item alongside the numbering fixes." },
+ { id:"census", domain:"Census 2022 baseline", status:"green",
+   terms:{
+     UDMP:{t:"— (not cited)", r:"", all:["Cites no census or source for its population figures"]},
+     SMP:{t:"65,714 (35,859 / 29,855)", r:"Ch.4", all:["Census 2022: 53,129 Maldivians + 12,585 foreign = 65,714","Phase 1: 35,859 · Phase 2: 29,855"]},
+     HTMP:{t:"—", r:"", all:[]},
+     EMP:{t:"65,714 (identical split)", r:"§2.3 Table 1", all:["Same figures, same phase split, same source (Maldives Bureau of Statistics 2024)"]},
+     LDS:{t:"—", r:"", all:[]}},
+   verdict:"Where the plans do share a source, they agree perfectly: Social and Environment cite identical Census 2022 figures down to the phase and nationality split. This is what every other data row should look like.",
+   fix:"None — extend the pattern: the UDMP should cite this same census baseline instead of an unsourced figure." },
+ { id:"facilities", domain:"Facility counts (mosques, schools, hospitals)", status:"green",
+   terms:{
+     UDMP:{t:"11 mosques · 11 schools · 2 hospitals", r:"2.4.1", all:["Existing: 11 mosques (13 planned) · 11 schools (22 planned) · 2 hospitals (5 planned)"]},
+     SMP:{t:"8+3 mosques · 7+1+3 schools · 2 hospitals", r:"Ch.4", all:["Mosques: 8 (P1) + 3 (P2) = 11, plus 3 temporary","Schools: 7 + 1 high school (P1) + 3 (P2) = 11 (preschools counted separately: 8)","Hospitals: 1 public + 1 private (P1) = 2, plus the P2 GP clinic"]},
+     HTMP:{t:"—", r:"", all:[]},
+     EMP:{t:"— (dataset categories only)", r:"§4.5", all:["Facilities appear as GIS dataset classes, no counts"]},
+     LDS:{t:"—", r:"", all:[]}},
+   verdict:"A quiet success: the UDMP's facility counts (11 mosques, 11 schools, 2 hospitals existing) reconcile exactly with Social's phase-by-phase breakdowns once temporary mosques and preschools are set aside.",
+   fix:"None — footnote the counting conventions (temporary mosques, preschools, clinics) so the agreement survives future updates." }
+];
+
 /* ---- VERSION REGISTRY + ACTIVE BINDINGS ------------------------------------
    The app reads PLANS/GAPS/OVERLAPS/INTEGRITY/DOC_ALIGN/MINDMAP/MM_PLAN via
    these mutable bindings; applyDataVersion() points them at a dataset. */
@@ -1793,17 +1937,17 @@ const DATA_VERSIONS = {
   "1.0":{ label:"V1.0", date:"8 Jul 2026",
     desc:"Baseline analysis of the July 2026 drafts (Framework Excel + first plan drafts).",
     PLANS:PLANS_V10, GAPS:GAPS_V10, OVERLAPS:OVERLAPS_V10, INTEGRITY:INTEGRITY_V10,
-    DOC_ALIGN:DOC_ALIGN_V10, MINDMAP:MINDMAP_V10, MM_PLAN:MM_PLAN_V10, ACTIONS:null, LANG:null },
+    DOC_ALIGN:DOC_ALIGN_V10, MINDMAP:MINDMAP_V10, MM_PLAN:MM_PLAN_V10, ACTIONS:null, LANG:null, DATAC:null },
   "1.2":{ label:"V1.2", date:"10 Aug 2026",
     desc:"Re-analysis of the August 2026 updated drafts (revised UDMP, Social, Transport, Landscape; Framework now a Word draft; Environment unchanged).",
     PLANS:PLANS_V12, GAPS:GAPS_V12, OVERLAPS:OVERLAPS_V12, INTEGRITY:INTEGRITY_V12,
-    DOC_ALIGN:DOC_ALIGN_V12, MINDMAP:MINDMAP_V12, MM_PLAN:MM_PLAN_V12, ACTIONS:ACTIONS_V12, LANG:LANG_V12 }
+    DOC_ALIGN:DOC_ALIGN_V12, MINDMAP:MINDMAP_V12, MM_PLAN:MM_PLAN_V12, ACTIONS:ACTIONS_V12, LANG:LANG_V12, DATAC:DATAC_V12 }
 };
-let DATA_VER, PLANS, GAPS, OVERLAPS, INTEGRITY, DOC_ALIGN, MINDMAP, MM_PLAN, ACTIONS, LANG;
+let DATA_VER, PLANS, GAPS, OVERLAPS, INTEGRITY, DOC_ALIGN, MINDMAP, MM_PLAN, ACTIONS, LANG, DATAC;
 function applyDataVersion(v){
   const d = DATA_VERSIONS[v] || DATA_VERSIONS["1.2"];
   DATA_VER = DATA_VERSIONS[v] ? v : "1.2";
-  ({PLANS,GAPS,OVERLAPS,INTEGRITY,DOC_ALIGN,MINDMAP,MM_PLAN,ACTIONS,LANG} = d);
+  ({PLANS,GAPS,OVERLAPS,INTEGRITY,DOC_ALIGN,MINDMAP,MM_PLAN,ACTIONS,LANG,DATAC} = d);
 }
 applyDataVersion((typeof localStorage!=="undefined" && localStorage.getItem('mp_data_ver')) || "1.2");
 
