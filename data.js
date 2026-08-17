@@ -1596,6 +1596,196 @@ LDS:[
  {id:"9.3.2.1",t:"Develop Urban Agriculture and Productive Landscapes",p:"7",o:"7.1"}]
 };
 
+/* ---- V1.2 LANGUAGE ALIGNMENT AUDIT ------------------------------------------
+   Term-by-term comparison across the five documents (August 2026 drafts;
+   Environment = the unchanged June draft). status: green = aligned vocabulary,
+   amber = drift (one concept, several names), red = conflict (same words used
+   with different meanings, or naming that actively misleads). `terms[doc]` =
+   {t: short term for the matrix cell, r: where it appears, all: fuller verbatim
+   usages}. Feeds the 05.a Language Alignment view. */
+const LANG_V12 = [
+ { id:"selfnames", domain:"What each plan calls itself", status:"red",
+   terms:{
+     UDMP:{t:"Urban Development Masterplan", r:"cover — consistent", all:["URBAN DEVELOPMENT MASTERPLAN (cover)","'Masterplan' one word throughout (62 uses)"]},
+     SMP:{t:"Social Development Masterplan / Social Master Plan", r:"cover vs Ch.1", all:["Social Development Masterplan – Hulhumalé (cover)","Social Master Plan (Ch.1 title)","'Masterplan' 7 × vs 'Master Plan' 26 ×"]},
+     HTMP:{t:"Transport Masterplan / Master Plan / Mobility Masterplan", r:"title vs abbreviations vs Ch.2", all:["Hulhumale Transport Masterplan (title)","HTMP – Hulhumale' Transport Master Plan (abbreviations)","The Hulhumale Mobility Masterplan (Ch.2 — twice)"]},
+     EMP:{t:"Environment Master Plan", r:"cover — consistent", all:["Environment Master Plan (cover; 'Master Plan' 11 ×, 'masterplan' 0)","But the Social plan cites it as 'Environmental Master Plan' (extra -al)"]},
+     LDS:{t:"Landscape Masterplan / Urban Forest Master Plan", r:"cover vs 8.3.1.1", all:["HULHUMALE LANDSCAPE MASTERPLAN (cover — 'Masterplan' 31 ×)","…but commissions an 'Urban Forest Master Plan' (two words, 8.3.1.1)"]}},
+   verdict:"The documents cannot agree on their own names: Transport calls itself three different things (Transport Masterplan / Transport Master Plan / Mobility Masterplan), Social uses two, and plans cite each other under wrong names (Social cites the 'Environmental' Master Plan; Environment cites the 'Social Master Plan' whose cover says 'Social Development Masterplan').",
+   fix:"Fix the official title of each document once, register the five titles + abbreviations (UDMP/SMP/HTMP/EMP/LDS) in a shared front-matter block, and correct every cross-reference." },
+ { id:"phases", domain:"Development phases (Phase 2 / Phase 3)", status:"red",
+   terms:{
+     UDMP:{t:"Phase 3 integrated into Phase 2", r:"2.1 · 8.3.1", all:["'Phase 3 was integrated with Phase 2 to create a continuous urban landmass' (2.1)","'the planned expansion area has been integrated into Phase 2' (8.3.1)"]},
+     SMP:{t:"Phase 1 / Phase 2 only", r:"throughout", all:["Phase 1 (20 ×), Phase 2 (35 ×), 'Hulhumale' 2' (4 ×)","Phase 3 never mentioned"]},
+     HTMP:{t:"Phase 2 as sole frontier", r:"throughout", all:["Phase 1 (34 ×), Phase 2 (94 ×)","Phase 3 and the merger never mentioned"]},
+     EMP:{t:"'ongoing Phase 3 reclamation'", r:"Exec Summary · 2.2 · 4.8", all:["'the ongoing Phase 3 reclamation' (Exec Summary)","'Phase 3: Ongoing expansion…' (2.2 table)","'Phases 1, 2 and 3' (4.8) — pre-merger geometry"]},
+     LDS:{t:"no numbered phases", r:"—", all:["Only generic 'phasing strategy' (Ch.2)"]}},
+   verdict:"The five documents describe different city geometries. The revised UDMP states the 2025 decision — Phase 3 merged into Phase 2 as one continuous landmass — but Environment still plans for a separate 'ongoing Phase 3', while Social, Transport and Landscape are silent on Phase 3 altogether.",
+   fix:"Every sector plan adopts the 2025 revision language ('Phase 3 integrated into Phase 2; one continuous urban landmass') in its context chapter, and EMP updates its Phase 3 references." },
+ { id:"platform", domain:"City data / operations platform", status:"red",
+   terms:{
+     UDMP:{t:"integrated urban management systems (unnamed)", r:"11.2.7 · 3.8.5", all:["'integrated urban management systems' (11.2.7)","'geographic information systems, monitoring platforms and urban data systems' (3.8.5)"]},
+     SMP:{t:"Urban Management System + centralized data hub", r:"5.1.4.1 · 5.1.1.3", all:["'centralized Urban Management System' / UMS (5.1.4.1.1 — 14 mentions)","'centralized data hub or GIS-based planning system' (5.1.1.3.1)"]},
+     HTMP:{t:"Smart Mobility Management Platform + TOC + TMOC", r:"Theme 1 F03 · Theme 3 F02 · Theme 4 F03", all:["'Smart Mobility Management Platform (SMMP)' — 'the nerve centre'","'Transport Operations Centre (TOC)' (Theme 1) AND 'Traffic Management and Operations Centre (TMOC)' (Theme 3) — clashing acronyms, 'integrated TOC-TMOC operation'","'unified data management platform' for environmental monitoring (Theme 4 F03) — a further separate system"]},
+     EMP:{t:"Environmental GIS Repository + Open Data Portal", r:"Theme 1", all:["'Hulhumalé Environmental GIS Repository' (Theme 1)","'Open Environmental Data Portal' (Theme 1)","'Central GIS and Environmental Data System' (3.5)"]},
+     LDS:{t:"GIS-based urban tree database", r:"8.3.1.2.7", all:["'GIS-based urban tree database' (8.3.1.2.7)","'GIS-based urban tree inventory' (8.3.2.2.3 — same thing, second name)"]}},
+   verdict:"At least seven named systems describe what should be one platform family — and even inside single documents the names multiply (Transport's TOC vs TMOC; Landscape's database vs inventory; Social's UMS vs data hub). No two documents use each other's names.",
+   fix:"Name ONE corporate platform (EMP's Repository architecture is the only specified one), give it a single registered name, and recast every other system as a named module of it. Merge TOC/TMOC into one centre." },
+ { id:"pednet", domain:"Pedestrian network & programme", status:"red",
+   terms:{
+     UDMP:{t:"Walkable City / Pedestrian & Cycling Network", r:"8.5.1–8.5.3", all:["'Walkable City' (8.5.1)","'Pedestrian and Cycling Network' (8.5.3)","'5–10 Minute Neighborhoods' (8.5.2)"]},
+     SMP:{t:"pedestrian infrastructure / walkability", r:"5.2.5.2 · 5.4.3.1", all:["'Enhance Walkability and Pedestrian Comfort' (5.2.5.2)","'pedestrian infrastructure' (5.4.3.1.1)"]},
+     HTMP:{t:"Pedestrian Priority Zones / Active Mobility", r:"Theme 2 F01", all:["'Pedestrian Priority Zones and Street Pedestrianization'","'Citywide Pedestrian Network Quality and Universal Accessibility'","umbrella: 'Active Mobility Promotion'"]},
+     EMP:{t:"priority walking network / walkability indicators", r:"Theme 6", all:["'priority walking network' / 'priority walking corridors'","'walkability indicator framework'"]},
+     LDS:{t:"Pedestrian Connectivity Network / Pedestrian Experience", r:"6.3.1.1 · Theme 1", all:["'Citywide Pedestrian Connectivity Network' (6.3.1.1)","'citywide pedestrian network plan' (6.3.1.1.1)","theme: 'Enhancing Pedestrian Experience'"]}},
+   verdict:"Five names for one walking network — and two documents (Transport and Landscape) each commission a citywide pedestrian network plan under different titles, so the naming drift conceals a real duplication.",
+   fix:"One registered name — recommend EMP's 'Priority Walking Network' (it is also the measurement layer) — used by all five; Transport and Landscape produce it jointly rather than two networks with two names." },
+ { id:"forest", domain:"Urban forest / greening programme", status:"red",
+   terms:{
+     UDMP:{t:"urban greening / tree coverage", r:"11.4 KPIs · 3.2.2", all:["'tree planting and urban greening' (KPI T02)","'tree coverage' (3.2.2)"]},
+     SMP:{t:"green cover", r:"5.4.2.2.1", all:["'city-level plan to increase green cover'","'limited tree cover' (4.4.2.4)"]},
+     HTMP:{t:"Street Tree Network", r:"Theme 4 F02", all:["'Street Tree Networks and Canopy Coverage'","'Street Tree Network Plan'","'urban forest' — zero uses"]},
+     EMP:{t:"tree canopy / tree inventory", r:"Theme 3", all:["'Tree Canopy and Shade Map'","'public tree and vegetation inventory'"]},
+     LDS:{t:"URBAN FOREST vs Green Forest", r:"Ch.8 title vs Exec Summary", all:["chapter: 'THEME 3 – URBAN FOREST' (Ch.8)","exec summary, structure & issues chapters: 'Green Forest'","'Urban Forest Master Plan' (8.3.1.1) + 'urban tree canopy targets' (8.3.1.1.2)"]}},
+   verdict:"One greening programme, five vocabularies — and the owning document contradicts itself (Landscape's own executive summary calls Theme 3 'Green Forest' while the chapter is titled 'Urban Forest'). Transport plans a 'Street Tree Network' without ever using the term the tree-owning plan chose.",
+   fix:"Settle on 'Urban Forest' as the programme name (fix the LDS exec summary), define Transport's Street Tree Network as its road-corridor component, and use 'canopy cover' as the shared metric everywhere." },
+ { id:"feedback", domain:"Resident complaints / feedback", status:"red",
+   terms:{
+     UDMP:{t:"satisfaction surveys / engagement", r:"11.4 · 3.8.6", all:["'Resident satisfaction with public spaces — Community satisfaction survey results (%)' (11.4)","'public engagement and stakeholder participation' (3.8.6)"]},
+     SMP:{t:"grievance redress system", r:"5.1.2.2", all:["'grievance redress mechanisms' / 'grievance redress system' (14 uses of 'grievance')","channels: 'online portal, hotline, QR-code location tagging' — the channel is never named"]},
+     HTMP:{t:"passenger complaints / feedback kiosks", r:"Theme 1 F07", all:["'structured passenger complaints and satisfaction monitoring system'","'Continuous Community Feedback and Participatory Planning'","'web-based feedback portal', 'Feedback Kiosks'"]},
+     EMP:{t:"public complaints via myHulhumalé", r:"Theme 7 · 7.3", all:["'Public Complaint Data Flow' — receipt channel named 'myHulhumalé' (7.3)","'six-month complaint summaries'","'grievance' — zero uses"]},
+     LDS:{t:"—", r:"", all:["Only 'stakeholder consultations' / 'community participation' — no feedback mechanism"]}},
+   verdict:"Presumably one resident intake, three vocabularies: Social builds a 'grievance redress system' with unnamed channels, Environment logs 'public complaints' through a channel it names (myHulhumalé) that Social never mentions, and Transport invents kiosks and a feedback portal of its own.",
+   fix:"One term ('public complaints' or 'grievance redress' — pick one), one named front door (myHulhumalé), referenced identically in Social 5.1.2.2, EMP Theme 7 and Transport's engagement actions." },
+ { id:"monitoring", domain:"Monitoring & delivery vocabulary", status:"red",
+   terms:{
+     UDMP:{t:"KPIs (Key Performance Indicator / Target / Measure)", r:"11.4", all:["'11.4 KPIs' table: 'Key Performance Indicator (KPI) / Target / Measure'"]},
+     SMP:{t:"indicators / implementation matrix", r:"Ch.7", all:["'Indicator' column, 'Implementation & Monitoring' (Ch.7)","timeframes 'Short 0-2 Yrs / Medium 3-5 Yrs / Long 6-10 Yrs'","'KPI' — zero uses"]},
+     HTMP:{t:"M&E framework / KPI architecture", r:"Theme 3 F03 · outline", all:["'Transport Performance Monitoring Framework'","'Key Performance Indicator architecture'","'Monitoring & Evaluation Framework' (outline chapter — unwritten)"]},
+     EMP:{t:"KPIs + Delivery Unit + action tracker", r:"Theme 7 · §5", all:["'KPIs' (30 uses)","'EMP Delivery Unit', 'EMP Master Action Tracker'","'Review cycle' per action"]},
+     LDS:{t:"Theme Implementation Matrix (detached)", r:"6.4/7.4/8.4/9.5", all:["'Theme Implementation matrix' — '[separate attachment]'","'KPI' — zero uses; all quantified targets deleted in this draft"]}},
+   verdict:"Four monitoring dialects and one missing dialect: Environment speaks KPIs with delivery machinery, the UDMP now has a KPI table, Social speaks 'indicators', Transport promises an 'M&E framework' it hasn't written, and Landscape detached its matrices entirely. Reading progress across plans requires four translations.",
+   fix:"Anchor on the UDMP 11.4 KPI table as the master list; every sector plan expresses its measures as KPIs feeding it, tracked in one Masterplan Delivery Unit (generalising EMP's)." },
+ { id:"structure", domain:"Document hierarchy vocabulary", status:"red",
+   terms:{
+     UDMP:{t:"planning themes (titles differ ×3)", r:"TOC vs body vs 11.4", all:["8 'planning themes' — no objectives/actions layer","Theme titles differ between TOC, body and KPI table (e.g. T01 'Balances Urban Growth & Spatial Development' vs 'Balanced Spatial Growth and Urban Structure' vs 'Balanced Urban Growth & Spatial Development')"]},
+     SMP:{t:"Themes ('pillars') → Objectives → Actions → Sub-actions", r:"Ch.3–5", all:["five themes 'which form the pillars of the plan' — both words used","orthography mixed: 'Sub-actions', 'Sub actions', 'Sub Actions'"]},
+     HTMP:{t:"Themes → Focus Areas → strategic directions", r:"Ch.5", all:["headings 'Focus 01 – …' but cross-referenced as 'Focus Area 05' and 'FA06'","'strategic directions' (cross-ref 'SD 05.2')"]},
+     EMP:{t:"Themes → Focus Areas → Actions → Subactions", r:"§5", all:["'Subactions' one word, 24 ×","no per-theme objectives (single 'Core Objective')"]},
+     LDS:{t:"Themes → Objectives → Actions → Sub-actions", r:"Ch.6–9", all:["'four strategic themes' as chapters","Theme Overview → Key Issues → Objectives → Actions → Sub-actions"]}},
+   verdict:"Reading the five documents together requires four mental models: the same level is a 'pillar', 'theme', 'focus area' or 'objective' depending on the document, sub-levels are spelled three ways, and the UDMP can't state its own theme titles consistently.",
+   fix:"One shared skeleton — Theme → Objective → Action → Sub-action (Social/Landscape already comply) — plus a crosswalk table in Transport and Environment; UDMP normalises its titles to one set." },
+ { id:"resilience", domain:"The word 'resilience'", status:"red",
+   terms:{
+     UDMP:{t:"whole-city + national + economic", r:"3.5 · 1.4 · 3.7", all:["'Building Climate Resilience Through Environmental Management' (3.5)","'national resilience' (1.4), 'economic resilience' (3.7.2)"]},
+     SMP:{t:"crime + climate + economic + digital", r:"Theme 4 · 5.5.5 · 5.3.2", all:["Theme 4 'Safety and Resilience' — includes crime prevention","'green and blue economy and local economic resilience' (5.5.5)","'resilience to online pressures' (5.3.2.2.2)"]},
+     HTMP:{t:"infrastructure + cyber + heat", r:"Theme 4 · Theme 3 F06", all:["'Environmental Conservation and Resilience in Transport Planning' (Theme 4)","'Digital Infrastructure Resilience and Cybersecurity'","'Heat-Resilient…Surfaces', 'Thermally Resilient Urban Materials'"]},
+     EMP:{t:"environmental + utility", r:"Themes 2 & 5", all:["'Coastal, Climate, Water and Disaster Resilience' (Theme 2)","'…Solar and Utility Resilience' (Theme 5)"]},
+     LDS:{t:"ecological + climate", r:"Vision · 8.3.2", all:["vision: 'A Resilient Blue-Green Hulhumalé'","'ecological resilience', 'Strengthen Climate Resilience and Urban Forest Management' (8.3.2)"]}},
+   verdict:"'Resilience' means crime prevention in one plan, cybersecurity in another, coastal defence in a third. A reader tracking 'resilience actions' across the plans is aggregating five different concepts under one word.",
+   fix:"Never use the word bare in headings — always qualified (climate resilience, coastal resilience, community safety, infrastructure resilience), with the qualified forms defined in a shared glossary." },
+ { id:"engstyle", domain:"British vs American English", status:"amber",
+   terms:{
+     UDMP:{t:"American", r:"throughout", all:["neighborhood 104 vs neighbourhood 0","the only fully US-spelling document; but 'programme' 4"]},
+     SMP:{t:"American (mixed)", r:"throughout", all:["neighborhood 36 vs 2; program 65 vs 4","centralized, prioritize, analyze, livability"]},
+     HTMP:{t:"British", r:"throughout", all:["programme 329 vs program 0","neighbourhood 11 vs 1; pedestrianisation (but 'Pedestrian Priority Zones and Street Pedestrianization' heading is US)"]},
+     EMP:{t:"British (consistent)", r:"throughout", all:["centralised, organised, analyse, liveability, prioritise","zero -ize forms"]},
+     LDS:{t:"thoroughly mixed", r:"throughout", all:["neighbourhood 15 vs neighborhood 14 — near 50/50"]}},
+   verdict:"Two documents are American English, two are British, one is a coin-flip. Every shared term (centralised/centralized, programme/program, liveability/livability) will collide in any merged glossary, index or search.",
+   fix:"Pick one convention in the HDC style guide (British English matches Maldivian government practice) and run a spelling pass on all five documents." },
+ { id:"hulhumale", domain:"Spelling of 'Hulhumalé'", status:"amber",
+   terms:{
+     UDMP:{t:"Hulhumalé (consistent)", r:"230 ×", all:["'Hulhumalé' 230 ×; plain 'Hulhumale' only in 2 figure placeholders"]},
+     SMP:{t:"3 variants", r:"throughout", all:["'Hulhumalé' 73 × / 'Hulhumale'' 24 × / plain 'Hulhumale' 5 ×"]},
+     HTMP:{t:"3 variants (title unaccented)", r:"title + body", all:["'Hulhumalé' 447 × / plain 'Hulhumale' 23 × (incl. its own title) / 'Hulhumale'' 9 ×"]},
+     EMP:{t:"Hulhumalé (consistent)", r:"47 ×", all:["'Hulhumalé' 47 ×, no variants"]},
+     LDS:{t:"4 variants incl. hybrid", r:"cover + footers", all:["'Hulhumalé' 66 × / 'Hulhumale'' 3 × (footers) / cover 'HULHUMALE' / hybrid 'Hulhumalé'' (Ch.3 heading)"]}},
+   verdict:"The city's name is spelled four ways across the set — including unaccented on the Transport and Landscape covers, and a hybrid 'Hulhumalé'' in the Landscape draft.",
+   fix:"Standardise 'Hulhumalé' (é, no apostrophe) everywhere including covers, headers and footers." },
+ { id:"heat", domain:"Heat / cooling / shade vocabulary", status:"amber",
+   terms:{
+     UDMP:{t:"cooler and greener", r:"3.5.4", all:["'Creating Cooler and Greener Urban Environments' (3.5.4)","'thermal comfort' 3 ×, 'urban heat' 4 ×; never 'heat mitigation'"]},
+     SMP:{t:"urban heat mitigation", r:"5.4.2.2", all:["'Mitigate urban heat to lower ‘feel’ temperature' (5.4.2.2)","'urban heat mitigation' / 'heat-mitigation strategies' 4 ×"]},
+     HTMP:{t:"heat mitigation + thermal comfort + cooling", r:"Theme 4 F05", all:["'Sustainable Surface and Heat Mitigation Management' (F05)","'thermal comfort' 22 ×, 'urban heat' 30 ×, 'urban heat crisis'","'Softscape Integration and Urban Cooling…'"]},
+     EMP:{t:"urban cooling / heat reduction", r:"Theme 3", all:["Theme 3 title 'Urban Cooling'; 'cooling corridors'","'heat reduction' — never 'heat mitigation' (0 uses)","'urban heat map', 'Heat Risk Map'"]},
+     LDS:{t:"shade / thermal comfort", r:"6.3.3", all:["'Create Shaded Streets and a Comfortable Public Realm' (6.3.3)","'Street Shade Strategy' (6.3.3.1)","'thermal comfort' 4 ×"]}},
+   verdict:"One thermal problem, four programme vocabularies: 'heat mitigation' (Social, Transport), 'urban cooling' (Environment — which pointedly never says mitigation), 'shade' (Landscape), 'cooler' (UDMP). Searching any one term misses most of the actions.",
+   fix:"Adopt 'urban cooling' as the shared programme term (EMP owns the heat map), keep 'shade' for the street-level instrument (LDS's strategy), and define both in the glossary." },
+ { id:"bluegreen", domain:"Blue-green vs green-blue", status:"amber",
+   terms:{
+     UDMP:{t:"all three orderings", r:"3.5.5 · 2.4.2 · 9.7", all:["'blue-green infrastructure' 7 ×","'green-blue infrastructure network' (2.4.2)","section '9.7 Green & Blue Network'"]},
+     SMP:{t:"'green and blue economy' only", r:"5.5.4–5.5.5", all:["economic sense only, green first","no green/blue infrastructure vocabulary"]},
+     HTMP:{t:"Blue-Green Mobility Corridors", r:"Theme 2 F04", all:["'Blue-Green Mobility Corridors' (blue first, 11 ×)","one stray 'green and blue infrastructure design'","'nature-based drainage management'"]},
+     EMP:{t:"Blue-Green Infrastructure", r:"Theme 3", all:["Theme 3 title; 'blue-green corridors'","'Environmental Protection and Blue-Green Network' (Zone Z5)"]},
+     LDS:{t:"blue-green infrastructure + NBS", r:"Vision · 8.3.2.1.3", all:["'blue-green infrastructure' 6 × (blue first)","'Nature-Based Solutions (NBS)' — defined in abbreviations"]}},
+   verdict:"The sector plans settled on 'blue-green' (blue first); the UDMP alone uses all three orderings — including a 'Green & Blue Network' section title that inverts the sector plans' term.",
+   fix:"Standardise 'blue-green infrastructure'; rename UDMP section 9.7 to 'Blue-Green Network' when it is written; keep 'nature-based solutions' as the technique term (LDS already defines it)." },
+ { id:"accessstd", domain:"Accessibility standard naming", status:"amber",
+   terms:{
+     UDMP:{t:"universal accessibility (once)", r:"8.4.7", all:["'universal accessibility' once, in Public Realm Standards","'universal design' — never"]},
+     SMP:{t:"universal design principles", r:"5.2.5 · 5.1.1.2.2", all:["'universal design principles/requirements' (7 mentions)","'barrier-free access' (5.2.5.1.2) — no named standard"]},
+     HTMP:{t:"Universal Accessibility Programme", r:"Theme 1 F04", all:["'Universal Accessibility Programme'","'universal design principles'"]},
+     EMP:{t:"universal access / accessibility barriers", r:"Theme 6", all:["'Universal access' focus area","'accessibility barriers' as the mapped object"]},
+     LDS:{t:"Hulhumalé Universal Design Manual", r:"6.3.2.1.1", all:["'Establish Universal Design Standards' (6.3.2.1)","the only NAMED deliverable: 'Hulhumalé Universal Design Manual for public realm projects'"]}},
+   verdict:"Everyone means the same thing ('universal design/accessibility') but only Landscape names an instrument — the Hulhumalé Universal Design Manual — and no other plan cites it, so four plans invoke principles with nothing to point at.",
+   fix:"All plans reference the 'Hulhumalé Universal Design Manual' by name as the citywide standard; retire parallel phrasings like 'Universal Accessibility Programme' or fold them under the Manual." },
+ { id:"agri", domain:"Urban agriculture / community gardens", status:"amber",
+   terms:{
+     UDMP:{t:"—", r:"", all:["Not addressed"]},
+     SMP:{t:"urban farming + agriculture + gardens (all three)", r:"5.5.4", all:["'urban farming and gardening programs' (5.5.4.1.3)","'urban agriculture' (5.5.4.1.1)","'community garden spaces' (4.3.1.11)"]},
+     HTMP:{t:"—", r:"", all:["Not addressed"]},
+     EMP:{t:"community gardens", r:"Theme 3", all:["'Community gardens and public green space quality' (focus area)"]},
+     LDS:{t:"urban agriculture / productive landscapes", r:"9.3.2", all:["'Develop Urban Agriculture and Productive Landscapes' (9.3.2.1)","'edible landscapes and edible streetscape planting' (9.3.2.1.2)"]}},
+   verdict:"Three vocabularies for one programme — Social alone uses all three interchangeably. Mild drift, but it hides the known action overlap (three plans propose gardens that the SEEDS/PDSAE projects already piloted).",
+   fix:"'Urban agriculture' as the programme term, 'community gardens' as the facility type; Social edits 5.5.4 to use both consistently." },
+ { id:"smart", domain:"The word 'smart'", status:"amber",
+   terms:{
+     UDMP:{t:"smart city / growth / technologies", r:"1.3 · 11.2.7", all:["'smart growth principles' (1.3), 'smart city' (11.2.7)","'smart, resilient, and self-sufficient island city' (8.5.9)"]},
+     SMP:{t:"one leftover: 'smart hubs'", r:"Ch.7 table", all:["'community digital kiosks or smart hubs' (Ch.7 row for 5.2.4.1.1 — text differs from Ch.5's version of the same id)"]},
+     HTMP:{t:"ten smart-X systems", r:"Themes 1–4", all:["Smart Mobility Management Platform, Smart Multi-Functional Street Pole, Smart Parking, Smart Road Condition Monitoring, Smart Adaptive Street Lighting, Smart BRT…","'smart urbanism'"]},
+     EMP:{t:"— (zero uses)", r:"", all:["Deliberately avoids the word"]},
+     LDS:{t:"smart crossings / waste / info platforms", r:"6.3.1.1.5 · 6.3.3.2.6 · 6.3.4.1.6", all:["'smart crossing solutions'","'smart waste management technologies'","'smart information platforms'"]}},
+   verdict:"'Smart' is doing unbounded work: ten branded systems in Transport, scattered gadget-level uses in Landscape, a stale leftover in Social, zero in Environment. The word signals everything and specifies nothing.",
+   fix:"Reserve 'smart' for the named digital platform family (define it in the glossary); elsewhere describe the actual capability (adaptive, sensor-based, real-time)." },
+ { id:"openspace", domain:"Open space / public realm vocabulary", status:"amber",
+   terms:{
+     UDMP:{t:"public space ≈ open space (+ metric confusion)", r:"throughout · 2.4.1 · 9.2.6", all:["'public space' 39 × / 'open space' 35 × / 'public realm' 14 ×","land-use class 'Open Green Space' (6.12)","'Open Space Ratio: 1.31 SQ' (2.4.1) vs 'open space index of approximately 2.5 m² per person' (9.2.6)"]},
+     SMP:{t:"public space", r:"87 ×", all:["'public space' 87 × — 'open space' 0, 'public realm' 0"]},
+     HTMP:{t:"public realm", r:"31 ×", all:["'public realm' 31 × > 'public space' 15 ×"]},
+     EMP:{t:"public realm", r:"Theme 6", all:["'public realm' 31 × (Theme 6 title) > 'green space' 15 ×"]},
+     LDS:{t:"open space", r:"54 ×", all:["'open space' 54 × ('public open space network') > 'public space' 39 ×","capitalises 'Open Space Index' as a formal tool (Ch.5)"]}},
+   verdict:"Each document has a different dominant term for the same territory — Social says 'public space', Transport and Environment say 'public realm', Landscape says 'open space' — and the UDMP's own open-space metric changes name and value between chapters (Ratio 1.31 vs Index 2.5 m²/person).",
+   fix:"Glossary with the three terms scoped (open space = land-use category; public space = usable places; public realm = streets + spaces as experienced), and fix the UDMP's Ratio/Index discrepancy." },
+ { id:"transit", domain:"Transit stops & hubs", status:"amber",
+   terms:{
+     UDMP:{t:"transport interchange points", r:"3.6.5 · 2.4.2", all:["'transport interchange points' (3.6.5)","land-use class 'Transport Facilities'"]},
+     SMP:{t:"bus stops / transit nodes", r:"5.4.3.3.1 · 5.4.1.2.1", all:["'shaded bus stops'","'transit nodes' (5.4.1.2.1)"]},
+     HTMP:{t:"transit hubs + Bus Stop Design Standard", r:"Theme 1", all:["'Accessible Transit Hubs'","'Bus Stop Design Standard'","'multimodal interchange facilities', 'Eco-Friendly Transportation Hubs'"]},
+     EMP:{t:"bus stops / public transport stops", r:"Theme 6", all:["'bus stop quality layer', 'bus stop audits'","'ferry terminals'"]},
+     LDS:{t:"transport hubs", r:"6.3.1.1.1", all:["'transport hubs'","'public transport corridors' (6.3.3.1.2)"]}},
+   verdict:"Minor but constant drift — stops, nodes, hubs, interchange points and facilities all describe the same assets; only Transport defines a standard ('Bus Stop Design Standard') the others could cite.",
+   fix:"Adopt Transport's vocabulary set (bus stop / transit hub / multimodal interchange) and have Social, Environment and Landscape cite the Bus Stop Design Standard." },
+ { id:"wayfinding", domain:"Wayfinding", status:"green",
+   terms:{
+     UDMP:{t:"—", r:"", all:["Word absent"]},
+     SMP:{t:"inclusive wayfinding", r:"4.2.1.5 · 5.4.3.1.2", all:["'inclusive wayfinding and navigational systems'","'signage to support wayfinding'"]},
+     HTMP:{t:"wayfinding (feature-level)", r:"Theme 1–2", all:["'real-time passenger and wayfinding information displays'","'audible wayfinding outputs'"]},
+     EMP:{t:"—", r:"", all:["Word absent"]},
+     LDS:{t:"Citywide Wayfinding System / Strategy", r:"6.3.4.1", all:["'Develop a Citywide Wayfinding System'","'Citywide Wayfinding Strategy' (6.3.4.1.1)","'digital wayfinding solutions' (6.3.4.1.6)"]}},
+   verdict:"Genuinely shared vocabulary — everyone who addresses it says 'wayfinding', with Landscape holding the programme noun and the others using it at feature level. The action-level ownership overlap remains (see Overlaps), but the language is aligned.",
+   fix:"None needed on wording — just have Social and Transport cite Landscape's Citywide Wayfinding Strategy as the parent instrument." },
+ { id:"verges", domain:"Green verges", status:"green",
+   terms:{
+     UDMP:{t:"planted / landscaped verges", r:"8.5.5", all:["'Continuous planted verges', 'landscaped verges' (Green Drainage Network)"]},
+     SMP:{t:"green verges", r:"4.4.2–4.4.3", all:["'green verges', 'Overgrown green verges' (issues framing)"]},
+     HTMP:{t:"green verges (+ Management Standard)", r:"Theme 2 F04 · Theme 4 F01", all:["'Green Verge Management Standard'","'Green Verge Protection and Hydrological Enhancement Programme'"]},
+     EMP:{t:"green verges", r:"Theme 2", all:["'Audit green verges and passive drainage'","'green verge systems', 'green verge audits'"]},
+     LDS:{t:"landscaped road verges", r:"6.3.3.3", all:["'landscaped road verges' (6.3.3.3.1)","'Road verge planting programmes' / 'community road verge planting programmes'"]}},
+   verdict:"The rare aligned term: all five documents say 'green verges' (Landscape adds 'road'). The competition here is over ownership and function, not words — which makes the shared term the right anchor for the joint standard.",
+   fix:"Keep the term; write the (already-proposed) Green Verge Management Standard as the joint instrument and have all five documents cite it by that exact name." }
+];
+
 /* ---- VERSION REGISTRY + ACTIVE BINDINGS ------------------------------------
    The app reads PLANS/GAPS/OVERLAPS/INTEGRITY/DOC_ALIGN/MINDMAP/MM_PLAN via
    these mutable bindings; applyDataVersion() points them at a dataset. */
@@ -1603,17 +1793,17 @@ const DATA_VERSIONS = {
   "1.0":{ label:"V1.0", date:"8 Jul 2026",
     desc:"Baseline analysis of the July 2026 drafts (Framework Excel + first plan drafts).",
     PLANS:PLANS_V10, GAPS:GAPS_V10, OVERLAPS:OVERLAPS_V10, INTEGRITY:INTEGRITY_V10,
-    DOC_ALIGN:DOC_ALIGN_V10, MINDMAP:MINDMAP_V10, MM_PLAN:MM_PLAN_V10, ACTIONS:null },
+    DOC_ALIGN:DOC_ALIGN_V10, MINDMAP:MINDMAP_V10, MM_PLAN:MM_PLAN_V10, ACTIONS:null, LANG:null },
   "1.2":{ label:"V1.2", date:"10 Aug 2026",
     desc:"Re-analysis of the August 2026 updated drafts (revised UDMP, Social, Transport, Landscape; Framework now a Word draft; Environment unchanged).",
     PLANS:PLANS_V12, GAPS:GAPS_V12, OVERLAPS:OVERLAPS_V12, INTEGRITY:INTEGRITY_V12,
-    DOC_ALIGN:DOC_ALIGN_V12, MINDMAP:MINDMAP_V12, MM_PLAN:MM_PLAN_V12, ACTIONS:ACTIONS_V12 }
+    DOC_ALIGN:DOC_ALIGN_V12, MINDMAP:MINDMAP_V12, MM_PLAN:MM_PLAN_V12, ACTIONS:ACTIONS_V12, LANG:LANG_V12 }
 };
-let DATA_VER, PLANS, GAPS, OVERLAPS, INTEGRITY, DOC_ALIGN, MINDMAP, MM_PLAN, ACTIONS;
+let DATA_VER, PLANS, GAPS, OVERLAPS, INTEGRITY, DOC_ALIGN, MINDMAP, MM_PLAN, ACTIONS, LANG;
 function applyDataVersion(v){
   const d = DATA_VERSIONS[v] || DATA_VERSIONS["1.2"];
   DATA_VER = DATA_VERSIONS[v] ? v : "1.2";
-  ({PLANS,GAPS,OVERLAPS,INTEGRITY,DOC_ALIGN,MINDMAP,MM_PLAN,ACTIONS} = d);
+  ({PLANS,GAPS,OVERLAPS,INTEGRITY,DOC_ALIGN,MINDMAP,MM_PLAN,ACTIONS,LANG} = d);
 }
 applyDataVersion((typeof localStorage!=="undefined" && localStorage.getItem('mp_data_ver')) || "1.2");
 

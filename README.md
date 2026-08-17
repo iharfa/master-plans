@@ -57,6 +57,10 @@ persists in `localStorage`.
   recommended fix and whether it needs resolving at the master-plan level.
 - **Overlaps & realignment** — where plans duplicate or contradict each other, naming *which
   document to change* and how to split ownership.
+- **Language Alignment (05.a)** — a 20-domain terminology audit: what each document calls
+  the same concept (data platform, pedestrian network, heat/cooling, "resilience", spelling
+  conventions…), scored aligned / drift / conflict, with the recommended standard wording
+  (`LANG_V12` in data.js).
 - **Document integrity** — numbering errors, typos and missing cross-links in the sources.
 - **Framework explorer** — browse all 8 pillars → objectives → policy directions with the
   contributing plans shown against each.

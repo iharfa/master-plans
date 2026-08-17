@@ -56,7 +56,7 @@ function switchDataVersion(v){
   CURATED=computeCurated();
   CURRENT_TEXTS=baselineDocs(); CURRENT=analyze(CURRENT_TEXTS);
   renderKpis();renderHiermap();renderBars();renderMatrix();renderMatrixAdv();
-  renderGaps();renderOverlaps();renderIntegrity();renderExplorer();renderBydoc();
+  renderGaps();renderOverlaps();renderLang();renderIntegrity();renderExplorer();renderBydoc();
   mmBuilt=false; mmSel=null; renderNetwork();
   renderVerSwitch();
 }
@@ -237,6 +237,54 @@ function renderOverlaps(){
       <h3>${o.title}</h3><p>${o.detail}</p>
       <div class="fix"><b>Realignment — change these docs →</b> ${o.change}</div></div>`;
   }).join('');
+}
+
+/* ---------- language alignment (05.a) ---------- */
+const LANG_STATUS={green:{label:"Aligned",cls:"ok"},amber:{label:"Drift",cls:"med"},red:{label:"Conflict",cls:"hi"}};
+function renderLang(){
+  const w=$('#langmatrix'); if(!w) return;
+  if(!(typeof LANG!=="undefined" && LANG)){
+    w.innerHTML=`<div class="note">The language-alignment audit exists for <b>V1.2</b> only — switch versions (top-right pill) to explore it.</div>`;
+    return;
+  }
+  const docs=["UDMP","SMP","HTMP","EMP","LDS"];
+  const dcol=id=>planById(id)?.colour||'var(--accent)';
+  const counts={green:0,amber:0,red:0}; LANG.forEach(l=>counts[l.status]++);
+  const head=`<tr><th class="pillar">Concept</th>${docs.map(d=>`<th>${planById(d)?.short||d}</th>`).join('')}<th>Verdict</th></tr>`;
+  let rows='';
+  for(const l of LANG){
+    const cells=docs.map(d=>{
+      const t=l.terms[d];
+      return `<td class="cell">${t?`<span class="lterm" style="--dc:${dcol(d)}" title="${mmEsc(t.r||'')}">${mmEsc(t.t)}</span>`:`<span class="cov none">—</span>`}</td>`;
+    }).join('');
+    const st=LANG_STATUS[l.status];
+    const detail=docs.filter(d=>l.terms[d]).map(d=>`
+      <div class="agrp" style="--dc:${dcol(d)}">
+        <div class="agh"><span class="dotp"></span><b>${planById(d)?.short||d}</b><span class="mini">${mmEsc(l.terms[d].r||'')}</span></div>
+        <ul class="alist">${(l.terms[d].all||[l.terms[d].t]).map(x=>`<li><span>${mmEsc(x)}</span></li>`).join('')}</ul>
+      </div>`).join('');
+    rows+=`<tr class="prow lrow" data-l="${l.id}"><th class="pillar"><span class="xchev">▸</span>${l.domain}</th>${cells}
+        <td class="cell"><span class="pill sev-${st.cls==='ok'?'low':st.cls==='med'?'med':'high'} dot" style="${st.cls==='ok'?'color:var(--ok);background:color-mix(in oklch,var(--ok) 14%,transparent)':''}">${st.label.toUpperCase()}</span></td></tr>
+      <tr class="xrow" id="xl-${l.id}" hidden><td colspan="${docs.length+2}">
+        <div class="xcap">${mmEsc(l.verdict)}</div>
+        <div class="xgroups">${detail}</div>
+        <div class="fix" style="margin-top:var(--s4)"><b>Standardise →</b> ${mmEsc(l.fix)}</div>
+      </td></tr>`;
+  }
+  w.innerHTML=`
+    <div class="kpis" style="margin-bottom:var(--s5)">
+      <div class="kpi ok"><div class="n">${counts.green}</div><div class="l">Aligned — shared vocabulary already</div></div>
+      <div class="kpi med"><div class="n">${counts.amber}</div><div class="l">Drift — one concept, several names</div></div>
+      <div class="kpi hi"><div class="n">${counts.red}</div><div class="l">Conflict — language actively misleads</div></div>
+    </div>
+    <div class="matrix-wrap"><table class="matrix madv langm"><thead>${head}</thead><tbody>${rows}</tbody></table></div>
+    <div class="legend">
+      <span><span class="sw cov none">—</span> Concept not addressed by that document</span>
+      <span><span class="sw">▸</span> Click a row for verbatim terms, locations and the recommended standard wording</span>
+    </div>`;
+  $$('tr.lrow',w).forEach(r=>r.onclick=()=>{
+    const x=$('#xl-'+r.dataset.l); x.hidden=!x.hidden; r.classList.toggle('open',!x.hidden);
+  });
 }
 
 /* ---------- integrity ---------- */
@@ -552,7 +600,7 @@ function exportJSON(){
 function boot(){
   initTheme();initNav();renderVerSwitch();
   renderKpis();renderHiermap();renderBars();renderMatrix();renderMatrixAdv();
-  renderGaps();renderOverlaps();renderIntegrity();renderExplorer();
+  renderGaps();renderOverlaps();renderLang();renderIntegrity();renderExplorer();
   renderBydoc();renderNetwork();renderFileList();renderVersions();
 
   const drop=$('#drop'),input=$('#fileinput');

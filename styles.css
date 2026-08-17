@@ -424,3 +424,11 @@ table.matrix.madv tr.phrow .pn{font-family:var(--font-mono);color:var(--accent-i
 table.matrix.madv tr.phrow .mini{font-family:var(--font-body);font-weight:400;color:var(--muted);font-size:12px}
 table.matrix.madv th.pillar{max-width:340px}
 .acnt{display:inline-flex;min-width:20px;justify-content:center;font-family:var(--font-mono);font-size:11.5px;font-weight:700;color:var(--dc);background:color-mix(in srgb,var(--dc) 14%,transparent);border-radius:999px;padding:2px 7px}
+
+/* ---- language alignment (05.a) ---- */
+table.matrix.langm th.pillar{max-width:230px;min-width:170px}
+table.matrix.langm td.cell{text-align:left}
+.lterm{display:inline-block;font-family:var(--font-mono);font-size:10.5px;font-weight:600;line-height:1.35;color:var(--dc);
+  background:color-mix(in srgb,var(--dc) 11%,transparent);border:1px solid color-mix(in srgb,var(--dc) 28%,transparent);
+  border-radius:7px;padding:3px 8px;max-width:150px;white-space:normal;overflow-wrap:anywhere}
+table.matrix.langm .xrow .alist li{font-size:12.5px}
