@@ -55,7 +55,7 @@ function switchDataVersion(v){
   applyDataVersion(v); localStorage.setItem('mp_data_ver',v);
   CURATED=computeCurated();
   CURRENT_TEXTS=baselineDocs(); CURRENT=analyze(CURRENT_TEXTS);
-  renderKpis();renderHiermap();renderBars();renderMatrix();
+  renderKpis();renderHiermap();renderBars();renderMatrix();renderMatrixAdv();
   renderGaps();renderOverlaps();renderIntegrity();renderExplorer();renderBydoc();
   mmBuilt=false; mmSel=null; renderNetwork();
   renderVerSwitch();
@@ -164,6 +164,52 @@ function renderMatrix(){
     const x=$('#xp-'+r.dataset.p);
     x.hidden=!x.hidden;
     r.classList.toggle('open',!x.hidden);
+  });
+}
+
+/* ---------- matrix advanced (objective level) ---------- */
+function objActionsHTML(o){
+  const groups=PLANS.map(pl=>({pl, items:(ACTIONS[pl.id]||[]).filter(a=>a.o===o.id)})).filter(g=>g.items.length);
+  if(!groups.length) return `<div class="mini" style="padding:var(--s2) 0">No delivering action mapped to this objective — see the Gaps tab.</div>`;
+  const total=groups.reduce((n,g)=>n+g.items.length,0);
+  return `<div class="xcap"><b>${total} action${total===1?'':'s'}</b> deliver objective ${o.id} — colour = source document, <code>code</code> = that document's own action number.</div>
+    <div class="xgroups">`+groups.map(g=>`
+    <div class="agrp" style="--dc:${g.pl.colour}">
+      <div class="agh"><span class="dotp"></span><b>${g.pl.short}</b><span class="mini">${g.items.length} action${g.items.length===1?'':'s'}</span></div>
+      <ul class="alist">${g.items.map(a=>`<li><code>${a.id}</code><span>${a.t}</span></li>`).join('')}</ul>
+    </div>`).join('')+`</div>`;
+}
+function renderMatrixAdv(){
+  const w=$('#matrixadv'); if(!w) return;
+  if(!(typeof ACTIONS!=="undefined" && ACTIONS)){
+    w.innerHTML=`<div class="note">The objective-level action inventory exists for <b>V1.2</b> only — switch versions (top-right pill) to explore it. The ${DATA_VERSIONS[DATA_VER].label} dataset carries representative theme actions at pillar level on the Coverage Matrix tab.</div>`;
+    return;
+  }
+  const plans=PLANS;
+  const head=`<tr><th class="pillar">Strategic Objective</th>${plans.map(p=>`<th>${p.short}</th>`).join('')}<th>Total</th></tr>`;
+  let rows='';
+  for(const p of FRAMEWORK){
+    const ptotal=plans.reduce((n,pl)=>n+(ACTIONS[pl.id]||[]).filter(a=>a.p===p.id).length,0);
+    rows+=`<tr class="phrow"><td colspan="${plans.length+2}"><span class="pn">P${p.id}</span>${p.title}<span class="mini"> · ${ptotal} actions</span></td></tr>`;
+    for(const o of p.objectives){
+      const counts=plans.map(pl=>(ACTIONS[pl.id]||[]).filter(a=>a.o===o.id).length);
+      const tot=counts.reduce((a,b)=>a+b,0);
+      const gap=CURATED.objCov[o.id].gap;
+      const ok=o.id.replace('.','-');
+      const cells=counts.map((c,i)=>`<td class="cell">${c?`<span class="acnt" style="--dc:${plans[i].colour}" title="${plans[i].name}">${c}</span>`:`<span class="cov none">·</span>`}</td>`).join('');
+      rows+=`<tr class="prow orow" data-o="${ok}"><th class="pillar"><span class="xchev">▸</span><span class="pn">${o.id}</span>${o.title}${gap?` <span class="gapflag">GAP</span>`:''}</th>${cells}<td class="cell"><span class="cpct">${tot}</span></td></tr>
+        <tr class="xrow" id="xo-${ok}" hidden><td colspan="${plans.length+2}">${objActionsHTML(o)}</td></tr>`;
+    }
+  }
+  w.innerHTML=`<div class="matrix-wrap"><table class="matrix madv"><thead>${head}</thead><tbody>${rows}</tbody></table></div>
+    <div class="legend">
+      <span><span class="sw acnt" style="--dc:var(--accent)">n</span> Number of delivering actions from that document</span>
+      <span><span class="sw cov none">·</span> No contribution</span>
+      <span><span class="sw">▸</span> Click an objective row to list its actions</span>
+      <span><span class="gapflag">GAP</span> Curated coverage gap — no (or insufficient) delivering action</span>
+    </div>`;
+  $$('tr.orow',w).forEach(r=>r.onclick=()=>{
+    const x=$('#xo-'+r.dataset.o); x.hidden=!x.hidden; r.classList.toggle('open',!x.hidden);
   });
 }
 
@@ -505,7 +551,7 @@ function exportJSON(){
 /* ---------- boot ---------- */
 function boot(){
   initTheme();initNav();renderVerSwitch();
-  renderKpis();renderHiermap();renderBars();renderMatrix();
+  renderKpis();renderHiermap();renderBars();renderMatrix();renderMatrixAdv();
   renderGaps();renderOverlaps();renderIntegrity();renderExplorer();
   renderBydoc();renderNetwork();renderFileList();renderVersions();
 

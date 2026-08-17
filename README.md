@@ -50,6 +50,9 @@ persists in `localStorage`.
   pillar row to expand the full list of delivering actions, colour-coded by source document
   and carrying each document's own action numbers (V1.2's `ACTIONS_V12` inventory, 267
   actions; V1.0 falls back to representative theme actions).
+- **Coverage matrix · Advanced** — the same inventory broken down to the framework's 33
+  strategic objectives: objective rows (grouped by pillar, gap objectives flagged) expand
+  to the colour-coded delivering actions; each action carries an `o` objective assignment.
 - **Gaps** — Strategic Policy Directions with no delivering action in any master plan, with the
   recommended fix and whether it needs resolving at the master-plan level.
 - **Overlaps & realignment** — where plans duplicate or contradict each other, naming *which
